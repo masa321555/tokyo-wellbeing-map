@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import { areaApi, simulationApi } from '@/lib/api';
 import { Area } from '@/types/area';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
-export default function SimulationPage() {
+function SimulationContent() {
   const searchParams = useSearchParams();
   const areaIdParam = searchParams.get('area_id');
   const { familyProfile, setFamilyProfile } = useStore();
@@ -341,5 +341,13 @@ export default function SimulationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SimulationPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64">読み込み中...</div>}>
+      <SimulationContent />
+    </Suspense>
   );
 }
