@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import areas, search, wellbeing, simulation, opendata, places, congestion
+from app.api.v1.endpoints import areas, search, wellbeing, simulation, opendata, places, congestion, admin
 
 api_router = APIRouter()
 
@@ -11,3 +11,4 @@ api_router.include_router(simulation.router, prefix="/simulation", tags=["simula
 api_router.include_router(opendata.router, prefix="/opendata", tags=["opendata"])
 api_router.include_router(places.router, prefix="/places", tags=["places"])
 api_router.include_router(congestion.router, prefix="/congestion", tags=["congestion"])
+api_router.include_router(admin.router, prefix="/admin", tags=["admin"])

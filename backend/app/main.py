@@ -1,15 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import os
+from pathlib import Path
 
 from app.api.v1.api import api_router
 from app.core.config import settings
+from app.database.database import engine, Base
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     print("Starting up Tokyo Wellbeing Map API...")
+    
+    # Check if database exists
+    db_path = Path("instance/tokyo_wellbeing.db")
+    if not db_path.exists():
+        print("Database not found. Creating and initializing...")
+        try:
+            # Create all tables
+            Base.metadata.create_all(bind=engine)
+            print("Database tables created successfully")
+            
+            # Note: Full data initialization will be done via separate endpoint
+            # to avoid timeout during startup
+        except Exception as e:
+            print(f"Error creating database: {e}")
+    
     yield
     # Shutdown
     print("Shutting down...")

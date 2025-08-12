@@ -10,8 +10,9 @@ pip install -r requirements.txt
 # Create database directory if it doesn't exist
 mkdir -p instance
 
-# Initialize database
-python -m app.database.init_db
+# Skip database initialization during build to avoid timeout
+# Database will be initialized on first request or manually
+echo "Skipping database initialization during build to avoid timeout"
 
 # Verify uvicorn is installed
 which uvicorn
