@@ -14,19 +14,23 @@ async def lifespan(app: FastAPI):
     # Startup
     print("Starting up Tokyo Wellbeing Map API...")
     
-    # Check if database exists
-    db_path = Path("instance/tokyo_wellbeing.db")
-    if not db_path.exists():
-        print("Database not found. Creating and initializing...")
-        try:
-            # Create all tables
-            Base.metadata.create_all(bind=engine)
-            print("Database tables created successfully")
-            
-            # Note: Full data initialization will be done via separate endpoint
-            # to avoid timeout during startup
-        except Exception as e:
-            print(f"Error creating database: {e}")
+    # Check if database exists and create tables
+    try:
+        # Always create tables to ensure they exist
+        Base.metadata.create_all(bind=engine)
+        print("Database tables created/verified successfully")
+        
+        # Check if data exists
+        from app.database.database import SessionLocal
+        db = SessionLocal()
+        from app.models.area import Area
+        area_count = db.query(Area).count()
+        db.close()
+        
+        if area_count == 0:
+            print("No data found. Please initialize via /api/v1/admin/init-data endpoint")
+    except Exception as e:
+        print(f"Error during database setup: {e}")
     
     yield
     # Shutdown
