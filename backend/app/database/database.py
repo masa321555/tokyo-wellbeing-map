@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from typing import Generator
 
 from app.core.config import settings
 
@@ -18,3 +19,11 @@ def init_db():
     """データベースの初期化"""
     from app.models.area import Base
     Base.metadata.create_all(bind=engine)
+
+def get_db() -> Generator:
+    """データベースセッションの取得"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
