@@ -27,7 +27,7 @@ interface AppState {
     minMovieTheaters?: number;
     hasThemeParks?: string;
   };
-  setSearchParams: (params: Partial<typeof searchParams>) => void;
+  setSearchParams: (params: Partial<AppState['searchParams']>) => void;
   resetSearchParams: () => void;
 
   // 家族構成
