@@ -37,7 +37,7 @@ interface AppState {
     childrenAges: number[];
     annualIncome: number;
   };
-  setFamilyProfile: (profile: Partial<typeof familyProfile>) => void;
+  setFamilyProfile: (profile: Partial<AppState['familyProfile']>) => void;
 
   // UI状態
   activeTab: string;
