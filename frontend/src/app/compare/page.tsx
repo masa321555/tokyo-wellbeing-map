@@ -401,9 +401,9 @@ export default function ComparePage() {
                 {areaDetails.map(area => {
                   const congestion = congestionData[area.id];
                   console.log(`Congestion data for ${area.name} (ID: ${area.id}):`, congestion);
-                  const score = congestion?.congestion?.overall?.score || 0;
-                  const level = congestion?.congestion?.overall?.level?.level || '';
-                  const label = congestion?.congestion?.overall?.level?.label || '-';
+                  const score = congestion?.congestion_score || 0;
+                  const level = score > 70 ? 'high' : score > 40 ? 'moderate' : 'low';
+                  const label = score > 70 ? '高' : score > 40 ? '中' : '低';
                   const color = level === 'high' ? 'text-red-600' : level === 'moderate' ? 'text-yellow-600' : 'text-green-600';
                   return (
                     <td key={area.id} className={`px-6 py-4 text-sm font-medium ${color}`}>
@@ -413,13 +413,13 @@ export default function ComparePage() {
                 })}
               </tr>
               <tr>
-                <td className="px-6 py-4 text-sm text-gray-600">朝の混雑度</td>
+                <td className="px-6 py-4 text-sm text-gray-600">ピーク時混雑度</td>
                 {areaDetails.map(area => {
                   const congestion = congestionData[area.id];
-                  const morningScore = congestion?.congestion?.time_based?.morning || 0;
+                  const peakScore = congestion?.peak_congestion || 0;
                   return (
                     <td key={area.id} className="px-6 py-4 text-sm">
-                      {morningScore ? `${morningScore.toFixed(0)}/100` : '-'}
+                      {peakScore ? `${peakScore.toFixed(0)}/100` : '-'}
                     </td>
                   );
                 })}
@@ -428,7 +428,7 @@ export default function ComparePage() {
                 <td className="px-6 py-4 text-sm text-gray-600">駅周辺混雑度</td>
                 {areaDetails.map(area => {
                   const congestion = congestionData[area.id];
-                  const stationScore = congestion?.congestion?.facility_based?.station || 0;
+                  const stationScore = congestion?.facility_congestion?.train_station?.peak || 0;
                   return (
                     <td key={area.id} className="px-6 py-4 text-sm">
                       {stationScore ? `${stationScore.toFixed(0)}/100` : '-'}
