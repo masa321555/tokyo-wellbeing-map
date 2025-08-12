@@ -158,16 +158,15 @@ export default function ComparePage() {
       ['映画館数', ...areaDetails.map(area => area.culture_data?.movie_theaters || '-')],
       ['テーマパーク数', ...areaDetails.map(area => area.culture_data?.theme_parks || '-')],
       ['総合混雑度', ...areaDetails.map(area => {
-        const score = congestionData[area.id]?.congestion?.overall?.score;
-        const label = congestionData[area.id]?.congestion?.overall?.level?.label;
-        return score ? `${label} (${score.toFixed(0)}/100)` : '-';
-      })],
-      ['朝の混雑度', ...areaDetails.map(area => {
-        const score = congestionData[area.id]?.congestion?.time_based?.morning;
+        const score = congestionData[area.id]?.congestion_score;
         return score ? `${score.toFixed(0)}/100` : '-';
       })],
-      ['駅周辺混雑度', ...areaDetails.map(area => {
-        const score = congestionData[area.id]?.congestion?.facility_based?.station;
+      ['平均混雑度', ...areaDetails.map(area => {
+        const score = congestionData[area.id]?.average_congestion;
+        return score ? `${score.toFixed(0)}/100` : '-';
+      })],
+      ['ピーク時混雑度', ...areaDetails.map(area => {
+        const score = congestionData[area.id]?.peak_congestion;
         return score ? `${score.toFixed(0)}/100` : '-';
       })],
     ];
