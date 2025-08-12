@@ -1,0 +1,317 @@
+{
+  "available_datasets": [
+    {
+      "id": "2bdc6fd8-4bfa-425a-bac0-0309dfbc2ea2",
+      "title": "ごみ分別一覧",
+      "organization": "中野区",
+      "resources": [
+        {
+          "name": "ごみ分別一覧",
+          "format": "CSV",
+          "url": "https://www2.wagmap.jp/nakanodatamap/nakanodatamap/opendatafile/map_1/CSV/opendata_5000769.csv",
+          "description": "中野区のごみの分別一覧です。"
+        }
+      ]
+    },
+    {
+      "id": "994b23e4-b764-4486-9a6d-079ca7fa116e",
+      "title": "ごみ分別一覧",
+      "organization": "世田谷区",
+      "resources": [
+        {
+          "name": "【世田谷区】ごみ分別一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/setagaya/131121_setagayaku_garbage_separate.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "a4d81819-2402-4f2a-b958-db489916e017",
+      "title": "ごみ分別一覧",
+      "organization": "台東区",
+      "resources": [
+        {
+          "name": "ごみ分別一覧",
+          "format": "CSV",
+          "url": "https://www.city.taito.lg.jp/kusei/online/opendata/koutu/gomibunbetuitiran.files/20250314_gomi_bunbetsu_ku_hp.csv",
+          "description": "ごみ分別一覧"
+        }
+      ]
+    },
+    {
+      "id": "76c3a3b4-3bda-4705-9e03-6eec6de339d5",
+      "title": "ごみ分別一覧",
+      "organization": "台東区",
+      "resources": [
+        {
+          "name": "ごみ分別一覧",
+          "format": "CSV",
+          "url": "https://www.city.taito.lg.jp/kusei/online/opendata/koutu/gomibunbetuitiran.files/gomibunbetuitiran.csv",
+          "description": "ごみ分別一覧"
+        }
+      ]
+    },
+    {
+      "id": "afd3aa19-bcb1-4472-b709-c53334082b1f",
+      "title": "ごみと資源の分別品目",
+      "organization": "文京区",
+      "resources": [
+        {
+          "name": "ごみと資源の分別品目",
+          "format": "XLSX",
+          "url": "https://www.city.bunkyo.lg.jp/documents/6059/bunbetuhinmoku.xlsx",
+          "description": "文京区のごみと資源の分別品目の一覧です。（EXCELファイル）"
+        },
+        {
+          "name": "ごみと資源の分別品目",
+          "format": "CSV",
+          "url": "https://www.city.bunkyo.lg.jp/documents/6059/bunbetuhinmoku.csv",
+          "description": "文京区のごみと資源の分別品目の一覧です。（CSVファイル）"
+        }
+      ]
+    },
+    {
+      "id": "31f2a564-b9e8-4f59-b007-2f277c2945f1",
+      "title": "資源・ごみ分別一覧",
+      "organization": "東村山市",
+      "resources": [
+        {
+          "name": "ごみの分別一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/132136_higashimurayamashi_garbage_separate.csv",
+          "description": "品目ごとのごみの分別一覧"
+        },
+        {
+          "name": "ごみの分別区分",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/132136_higashimurayamashi_garbage_separate_rule.csv",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "173f0db5-556d-4bf7-b41e-7493e5321f22",
+      "title": "ごみの分別方法一覧",
+      "organization": "世田谷区",
+      "resources": [
+        {
+          "name": "ごみの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.city.setagaya.lg.jp/documents/22308/n6_131121_garbage_separation.csv",
+          "description": "世田谷区のごみの分別方法の一覧です。"
+        }
+      ]
+    },
+    {
+      "id": "92ee513d-d604-4ac3-9bd5-d6306c6003b0",
+      "title": "ごみの分別方法一覧",
+      "organization": "荒川区",
+      "resources": [
+        {
+          "name": "ごみの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.city.arakawa.tokyo.jp/documents/23112/131181_garbage_separation.csv",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "37b52960-2339-43e8-8e16-c16e989353d3",
+      "title": "ごみの分別方法一覧",
+      "organization": "杉並区",
+      "resources": [
+        {
+          "name": "ごみの分別方法一覧令和6年4月時点",
+          "format": "CSV",
+          "url": "https://www.city.suginami.tokyo.jp/documents/713/a2.csv",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "13cac65b-4b22-4887-8277-c7367ea18db4",
+      "title": "【事業案内】ごみの分別一覧",
+      "organization": "三鷹市",
+      "resources": [
+        {
+          "name": "ごみの分類区分",
+          "format": "CSV",
+          "url": "https://www.city.mitaka.lg.jp/c_service/103/attached/attach_103696_1.csv",
+          "description": "三鷹市のごみの分類区分一覧です。"
+        },
+        {
+          "name": "ごみの分類一覧",
+          "format": "CSV",
+          "url": "https://www.city.mitaka.lg.jp/c_service/103/attached/attach_103696_2.csv",
+          "description": "三鷹市ホームページに掲載されているごみの分類一覧です。"
+        }
+      ]
+    },
+    {
+      "id": "43ec0ee7-ae2b-4833-b2ca-cd478d5ad271",
+      "title": "港区ごみと資源の分別品目",
+      "organization": "港区",
+      "resources": [
+        {
+          "name": "港区ごみと資源の分別品目",
+          "format": "CSV",
+          "url": "https://opendata.city.minato.tokyo.jp/dataset/de618de7-7ebf-4b23-9a79-34b5fc2d38aa/resource/d5ce0578-c97b-4b54-bfee-27073d1bc9ee/download/bunbetuhinmoku.csv",
+          "description": "港区のごみと資源の分別品目です。"
+        }
+      ]
+    },
+    {
+      "id": "9765b449-8739-44e9-a0f6-0b66e50c7c88",
+      "title": "荒川区ごみと資源の分別品目",
+      "organization": "荒川区",
+      "resources": [
+        {
+          "name": "荒川区\nごみと資源の分別品目",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/arakawa/arakawa_gomihinmoku.csv",
+          "description": "荒川区のごみと資源の分別品目です。"
+        }
+      ]
+    },
+    {
+      "id": "25008e90-bda4-49e2-b13c-944dad7ebaca",
+      "title": "ゴミの分別方法一覧",
+      "organization": "西東京市",
+      "resources": [
+        {
+          "name": "ごみの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/nishitokyo/132292_garbage_separation.csv",
+          "description": ""
+        },
+        {
+          "name": "ゴミの分類区分",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/nishitokyo/132292_garbage_separate_rule.csv",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "4fe7f6a6-c4ae-46bb-8b64-c004ff661cd7",
+      "title": "ゴミの分別方法一覧",
+      "organization": "立川市",
+      "resources": [
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/tachikawa/132021_tachikawashi_garbage_separate.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "37abebd4-901a-4e71-b00f-859199f65430",
+      "title": "ゴミの分別方法一覧",
+      "organization": "日野市",
+      "resources": [
+        {
+          "name": "ゴミの分類区分",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/hino/132128_hinoshi_garbage_separate.csv",
+          "description": "ゴミの分類区分"
+        },
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/hino/132128_hinoshi_garbage_separate_rule.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "2fca481e-92ca-4b06-b018-85222754c4bc",
+      "title": "ゴミの分別方法一覧",
+      "organization": "東久留米市",
+      "resources": [
+        {
+          "name": "ゴミの分類区分",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/higashikurume/132225_higashikurumeshi_garbage_separate_rule.csv",
+          "description": "ゴミの分類区分"
+        },
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/higashikurume/132225_higashikurumeshi_garbage_separate.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "00ee4e66-c97f-42d1-b3f2-f6de9d3631a5",
+      "title": "ゴミの分別方法一覧",
+      "organization": "八王子市",
+      "resources": [
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.city.hachioji.tokyo.jp/contents/open/002/p005873_d/fil/132012_garbage_separation.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "6dad4c1a-0bb0-4836-b80a-8007da3e9dfb",
+      "title": "ゴミの分別方法一覧",
+      "organization": "瑞穂町",
+      "resources": [
+        {
+          "name": "ゴミの分類区分",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/mizuho/133035_mizuhomachi_garbage_separate_rule.csv",
+          "description": "ゴミの分類区分"
+        },
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/mizuho/133035_mizuhomachi_garbage_separate.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "fff9c291-1aca-44cd-950f-619ac18a9ba6",
+      "title": "ゴミの分別方法一覧",
+      "organization": "三宅村",
+      "resources": [
+        {
+          "name": "ゴミの分類区分",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/miyake/133817_miyakemura_garbage_separate_rule.csv",
+          "description": "ゴミの分類区分"
+        },
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/miyake/133817_miyakemura_garbage_separate.csv",
+          "description": "ゴミの分別方法一覧"
+        }
+      ]
+    },
+    {
+      "id": "0fcf64fa-a027-454c-8cea-8efb1617d104",
+      "title": "東村山市ゴミの分別方法一覧",
+      "organization": "東村山市",
+      "resources": [
+        {
+          "name": "ゴミの分別方法一覧",
+          "format": "CSV",
+          "url": "https://www.opendata.metro.tokyo.lg.jp/higashimurayama/20240619_garbage_separation.csv",
+          "description": ""
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_datasets": 351,
+    "analyzed_datasets": 20,
+    "has_ward_specific_data": true
+  }
+}

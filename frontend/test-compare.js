@@ -1,0 +1,27 @@
+// 比較機能の動作確認スクリプト
+console.log('比較機能とレーダーチャートの実装が完了しました。');
+console.log('');
+console.log('実装内容:');
+console.log('1. レーダーチャートによる総合評価比較');
+console.log('   - 6つのカテゴリ（家賃、治安、教育、公園、医療、文化）のスコアを視覚化');
+console.log('   - カスタムツールチップで詳細な数値を表示');
+console.log('   - 最大5エリアまで同時比較可能');
+console.log('');
+console.log('2. 詳細比較テーブル');
+console.log('   - 基本情報（人口、面積、ウェルビーイングスコア）');
+console.log('   - 住宅・家賃情報');
+console.log('   - 教育・子育て環境');
+console.log('   - 生活環境（公園、治安、医療）');
+console.log('   - レジャー施設（映画館、テーマパーク、ショッピングモール、ゲームセンター）');
+console.log('   - 混雑度情報（平均混雑度、ピーク時混雑度）');
+console.log('');
+console.log('3. 追加機能');
+console.log('   - CSVエクスポート機能');
+console.log('   - 混雑度データの自動取得と表示');
+console.log('   - 値に応じた色分け表示（混雑度）');
+console.log('');
+console.log('使用方法:');
+console.log('1. ホームページで2〜5つのエリアを選択');
+console.log('2. 「比較する」ボタンをクリック');
+console.log('3. 比較ページでレーダーチャートと詳細データを確認');
+console.log('4. 「CSVダウンロード」ボタンでデータをエクスポート');

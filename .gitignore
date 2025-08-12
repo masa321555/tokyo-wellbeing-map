@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node (for frontend)
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Project specific
+google_places_cost.txt
+backend/venv/
+backend/app.db
+backend/tokyo_wellbeing.db
+data/
+*.xlsx
+*.xls
+test_*.py
+*_test.py
+
+# Keep important files
+!backend/tokyo_waste_separation_rules.json
+!backend/requirements.txt
+!frontend/package.json
+!frontend/package-lock.json
