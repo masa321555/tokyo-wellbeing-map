@@ -318,6 +318,106 @@ async def init_sample_data(db: Session):
             )
             db.add(culture)
     
+    # ゴミ分別データを追加
+    print("Adding waste separation data...")
+    db.query(WasteSeparation).delete()
+    db.commit()
+    
+    waste_data = {
+        "千代田区": {
+            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
+            "collection_days": {
+                "可燃ごみ": "月・木",
+                "不燃ごみ": "第1・3水曜",
+                "資源": "火曜",
+                "粗大ごみ": "申込制"
+            },
+            "strictness_level": 2.5,
+            "special_rules": ["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"],
+            "features": "ビジネス街のため事業系ごみの分別も重要"
+        },
+        "中央区": {
+            "separation_types": ["燃やすごみ", "燃やさないごみ", "資源", "粗大ごみ"],
+            "collection_days": {
+                "燃やすごみ": "火・金",
+                "燃やさないごみ": "第2・4月曜",
+                "資源": "水曜",
+                "粗大ごみ": "申込制"
+            },
+            "strictness_level": 3.0,
+            "special_rules": ["資源は種類ごとに分別", "プラスチック製容器包装は別途回収"],
+            "features": "集合住宅が多く分別ルールが徹底されている"
+        },
+        "港区": {
+            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
+            "collection_days": {
+                "可燃ごみ": "月・水・金",
+                "不燃ごみ": "第1・3火曜",
+                "資源": "木曜",
+                "粗大ごみ": "申込制"
+            },
+            "strictness_level": 3.5,
+            "special_rules": ["生ごみは水切りを徹底", "古紙は種類別に分別", "外国語表記あり"],
+            "features": "国際的な地域で多言語対応の分別ガイドあり"
+        }
+    }
+    
+    # 各区のゴミ分別データを追加（サンプルを参考に全区分作成）
+    for area in db.query(Area).all():
+        if area.name in waste_data:
+            data = waste_data[area.name]
+        else:
+            # デフォルトデータ
+            data = {
+                "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
+                "collection_days": {
+                    "可燃ごみ": "月・木",
+                    "不燃ごみ": "第2・4水曜",
+                    "資源": "金曜",
+                    "粗大ごみ": "申込制"
+                },
+                "strictness_level": 2.0,
+                "special_rules": ["指定袋の使用推奨", "資源は洗って出す"],
+                "features": "標準的な分別ルール"
+            }
+        
+        waste_separation = WasteSeparation(
+            area_id=area.id,
+            separation_types=data["separation_types"],
+            collection_days=data["collection_days"],
+            strictness_level=data["strictness_level"],
+            special_rules=data["special_rules"],
+            features=data["features"]
+        )
+        db.add(waste_separation)
+    
+    # 年齢層別人口データを追加
+    print("Adding age distribution data...")
+    age_data = {
+        "千代田区": {"0-14": 7821, "15-64": 45823, "65+": 11356, "0-4": 2607, "5-9": 2607, "10-14": 2607},
+        "中央区": {"0-14": 23619, "15-64": 123456, "65+": 26925, "0-4": 7873, "5-9": 7873, "10-14": 7873},
+        "港区": {"0-14": 37843, "15-64": 197562, "65+": 42595, "0-4": 12614, "5-9": 12614, "10-14": 12615}
+    }
+    
+    for area in db.query(Area).all():
+        if area.name in age_data:
+            data = age_data[area.name]
+        else:
+            # デフォルトの年齢分布データ（総人口の比率で計算）
+            total_pop = area.population
+            data = {
+                "0-14": int(total_pop * 0.12),
+                "15-64": int(total_pop * 0.65),
+                "65+": int(total_pop * 0.23),
+                "0-4": int(total_pop * 0.04),
+                "5-9": int(total_pop * 0.04),
+                "10-14": int(total_pop * 0.04)
+            }
+        
+        # 年齢層別人口データを area.age_distribution に設定
+        area.age_distribution = data
+        db.add(area)
+    
     db.commit()
     print("Sample data initialization completed!")
 
