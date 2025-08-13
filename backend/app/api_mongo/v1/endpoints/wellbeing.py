@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from beanie import Document
 
 from app.models_mongo.area import Area
-from app.services.wellbeing_calculator import WellbeingCalculator, WellbeingWeights
+from app.services.wellbeing_calculator_mongo import WellbeingCalculator, WellbeingWeights
 
 router = APIRouter()
 wellbeing_calculator = WellbeingCalculator()
