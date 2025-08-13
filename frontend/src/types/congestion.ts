@@ -1,6 +1,6 @@
 // Congestion data types for Tokyo Wellbeing Map
 export interface CongestionData {
-  area_id: number;
+  area_id: string;  // MongoDB ObjectId
   average_congestion: number;
   peak_congestion: number;
   weekend_congestion: number;

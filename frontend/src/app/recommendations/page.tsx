@@ -25,7 +25,7 @@ interface UserProfile {
 }
 
 interface Recommendation {
-  area_id: number;
+  area_id: string;  // MongoDB ObjectId
   area_name: string;
   total_score: number;
   category_scores: Record<string, number>;

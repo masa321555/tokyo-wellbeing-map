@@ -5,7 +5,7 @@ interface AppState {
   // 選択中のエリア
   selectedAreas: Area[];
   addSelectedArea: (area: Area) => void;
-  removeSelectedArea: (areaId: number) => void;
+  removeSelectedArea: (areaId: string) => void;
   clearSelectedAreas: () => void;
 
   // ウェルビーイング重み設定
