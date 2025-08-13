@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 
 interface AreaMapProps {
   areas: Area[];
-  selectedAreaIds?: number[];
+  selectedAreaIds?: string[];  // MongoDB ObjectId
   onAreaClick?: (area: Area) => void;
   center?: [number, number];
   zoom?: number;
