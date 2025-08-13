@@ -21,7 +21,7 @@ export const areaApi = {
   },
 
   // エリア詳細取得
-  getAreaDetail: async (areaId: number) => {
+  getAreaDetail: async (areaId: string) => {
     const response = await api.get<AreaDetail>(`/areas/${areaId}`);
     return response.data;
   },
@@ -37,7 +37,7 @@ export const areaApi = {
 export const wellbeingApi = {
   // スコア計算
   calculateScore: async (
-    areaId: number,
+    areaId: string,
     weights: WellbeingWeights,
     targetRent?: number,
     familySize = 4
