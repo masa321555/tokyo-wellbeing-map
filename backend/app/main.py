@@ -28,7 +28,11 @@ async def lifespan(app: FastAPI):
         db.close()
         
         if area_count == 0:
-            print("No data found. Please initialize via /api/v1/admin/init-data endpoint")
+            print("No data found. Initializing database...")
+            # 本番環境では初回のみ自動でデータを初期化
+            from app.database.init_db import init_db
+            init_db()
+            print("Database initialized successfully!")
     except Exception as e:
         print(f"Error during database setup: {e}")
     
