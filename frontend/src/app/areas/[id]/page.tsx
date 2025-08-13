@@ -31,9 +31,9 @@ export default function AreaDetailPage() {
     setLoading(true);
     try {
       const [areaData, scoreData, congestionInfo] = await Promise.all([
-        areaApi.getAreaDetail(parseInt(areaId)),
-        wellbeingApi.calculateScore(parseInt(areaId), weights),
-        congestionApi.getAreaCongestion(parseInt(areaId)).catch(() => null),
+        areaApi.getAreaDetail(areaId),
+        wellbeingApi.calculateScore(areaId, weights),
+        congestionApi.getAreaCongestion(areaId).catch(() => null),
       ]);
       setArea(areaData);
       setWellbeingScore(scoreData);

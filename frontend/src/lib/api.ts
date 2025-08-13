@@ -21,13 +21,13 @@ export const areaApi = {
   },
 
   // エリア詳細取得
-  getAreaDetail: async (areaId: number) => {
+  getAreaDetail: async (areaId: string) => {
     const response = await api.get<AreaDetail>(`/areas/${areaId}`);
     return response.data;
   },
 
   // エリア比較
-  compareAreas: async (areaIds: number[]) => {
+  compareAreas: async (areaIds: string[]) => {
     const response = await api.post('/areas/compare', { area_ids: areaIds });
     return response.data;
   },
@@ -37,7 +37,7 @@ export const areaApi = {
 export const wellbeingApi = {
   // スコア計算
   calculateScore: async (
-    areaId: number,
+    areaId: string,
     weights: WellbeingWeights,
     targetRent?: number,
     familySize = 4
@@ -168,7 +168,7 @@ export const opendataApi = {
 // 混雑度関連API
 export const congestionApi = {
   // エリアの混雑度取得
-  getAreaCongestion: async (areaId: number) => {
+  getAreaCongestion: async (areaId: string) => {
     const response = await api.get(`/congestion/area/${areaId}/`);
     return response.data;
   },
@@ -180,13 +180,13 @@ export const congestionApi = {
   },
 
   // エリアの混雑度更新
-  updateAreaCongestion: async (areaId: number) => {
+  updateAreaCongestion: async (areaId: string) => {
     const response = await api.post(`/congestion/update/${areaId}/`);
     return response.data;
   },
 
   // 複数エリアの混雑度比較
-  compareCongestion: async (areaIds: number[]) => {
+  compareCongestion: async (areaIds: string[]) => {
     const response = await api.get('/congestion/compare', {
       params: { area_ids: areaIds.join(',') },
     });

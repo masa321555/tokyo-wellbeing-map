@@ -1,5 +1,5 @@
 export interface Area {
-  id: number;
+  id: string;  // MongoDB ObjectId
   code: string;
   name: string;
   name_kana?: string;
