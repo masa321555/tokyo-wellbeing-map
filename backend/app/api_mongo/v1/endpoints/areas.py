@@ -23,6 +23,9 @@ async def get_area(area_id_or_code: str):
     try:
         # まずIDとして検索を試みる
         from bson import ObjectId
+        from app.models_mongo.waste_separation import WasteSeparation
+        from app.models_mongo.congestion import CongestionData
+        
         area = None
         
         # ObjectIDとして有効な形式かチェック
@@ -39,7 +42,59 @@ async def get_area(area_id_or_code: str):
         if not area:
             raise HTTPException(status_code=404, detail=f"Area {area_id_or_code} not found")
         
-        return area.model_dump(mode='json')
+        # エリアデータを辞書に変換
+        area_dict = area.model_dump(mode='json')
+        
+        # ゴミ分別データを取得
+        waste_separation = await WasteSeparation.find_one(WasteSeparation.area_code == area.code)
+        if waste_separation:
+            area_dict['waste_separation'] = waste_separation.model_dump(mode='json')
+        
+        # 混雑度データを取得して変換
+        congestion = await CongestionData.find_one(CongestionData.area_code == area.code)
+        if congestion:
+            # フロントエンドが期待する形式に変換
+            congestion_dict = congestion.model_dump(mode='json')
+            
+            # station_congestionとroad_congestionがある場合の処理
+            station_data = congestion_dict.get('station_congestion', {})
+            road_data = congestion_dict.get('road_congestion', {})
+            
+            transformed_congestion = {
+                'overall': {
+                    'score': congestion_dict.get('congestion_score', 60),
+                    'level': {
+                        'level': 'medium',
+                        'label': '中程度',
+                        'color': '#FFAA00',
+                        'description': '通常の混雑度'
+                    }
+                },
+                'time_based': {
+                    'weekday': station_data.get('morning', 70),
+                    'weekend': station_data.get('weekend', 50),
+                    'morning': station_data.get('morning', 70),
+                    'daytime': 60,  # デフォルト値
+                    'evening': station_data.get('evening', 75)
+                },
+                'facility_based': {
+                    'station': station_data.get('morning', 70),
+                    'shopping': 65,  # デフォルト値
+                    'park': 40,  # デフォルト値
+                    'residential': road_data.get('morning', 60)
+                },
+                'family_metrics': {
+                    'family_friendliness': 70,  # デフォルト値
+                    'stroller_accessibility': 65,  # デフォルト値
+                    'quiet_area_ratio': 0.4  # デフォルト値
+                }
+            }
+            
+            area_dict['congestion_data'] = {
+                'congestion': transformed_congestion
+            }
+        
+        return area_dict
     except HTTPException:
         raise
     except Exception as e:

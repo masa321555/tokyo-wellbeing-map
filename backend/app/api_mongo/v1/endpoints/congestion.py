@@ -4,6 +4,60 @@ from app.models_mongo.congestion import CongestionData
 
 router = APIRouter()
 
+@router.get("/area/{area_id_or_code}/", response_model=dict)
+async def get_area_congestion(area_id_or_code: str):
+    """特定エリアの混雑度情報を取得"""
+    try:
+        from app.models_mongo.area import Area
+        
+        # まずエリアを検索
+        area = None
+        if len(area_id_or_code) == 24:
+            try:
+                area = await Area.get(area_id_or_code)
+            except:
+                pass
+        
+        if not area:
+            area = await Area.find_one(Area.code == area_id_or_code)
+        
+        if not area:
+            raise HTTPException(status_code=404, detail=f"Area {area_id_or_code} not found")
+        
+        # 混雑度データを取得
+        congestion = await CongestionData.find_one(CongestionData.area_code == area.code)
+        
+        if not congestion:
+            raise HTTPException(status_code=404, detail=f"Congestion data not found for area {area.name}")
+        
+        return congestion.model_dump(mode='json')
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/update/{area_id_or_code}/")
+async def update_area_congestion(area_id_or_code: str):
+    """特定エリアの混雑度情報を更新（ダミー実装）"""
+    # 実際の実装では外部APIやリアルタイムデータを取得
+    return {"message": f"Congestion data updated for area {area_id_or_code}"}
+
+@router.get("/compare", response_model=dict)
+async def compare_congestion(area_ids: str):
+    """複数エリアの混雑度を比較"""
+    try:
+        area_id_list = area_ids.split(',')
+        results = []
+        
+        for area_id in area_id_list:
+            congestion = await CongestionData.find_one(CongestionData.area_code == area_id)
+            if congestion:
+                results.append(congestion.model_dump(mode='json'))
+        
+        return {"areas": results}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/", response_model=List[dict])
 async def get_all_congestion_data(
     skip: int = Query(0, ge=0),
