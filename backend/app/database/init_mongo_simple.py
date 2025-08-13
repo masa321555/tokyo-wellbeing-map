@@ -4,7 +4,7 @@ MongoDB初期化スクリプト（簡略版）
 import asyncio
 import os
 from app.database.mongodb import connect_to_mongo, close_mongo_connection, db
-from app.models_mongo.area import Area
+from app.models_mongo.area import Area, HousingData, ParkData, SchoolData, SafetyData, MedicalData, CultureData, ChildcareData
 from app.models_mongo.waste_separation import WasteSeparation
 from app.models_mongo.congestion import CongestionData
 from beanie import init_beanie
@@ -70,6 +70,65 @@ async def init_all_areas():
             "70+": int(area_data["pop"] * 0.12)
         }
         
+        # 各データを適切なモデルインスタンスとして作成
+        housing = HousingData(
+            rent_1r=8.0 + (area_data["pop"] / 200000),
+            rent_1k=9.0 + (area_data["pop"] / 180000),
+            rent_1dk=10.0 + (area_data["pop"] / 160000),
+            rent_1ldk=12.0 + (area_data["pop"] / 140000),
+            rent_2ldk=15.0 + (area_data["pop"] / 100000) * 2,
+            rent_3ldk=20.0 + (area_data["pop"] / 80000) * 2,
+            vacant_rate=5.0 + (area_data["pop"] / 1000000)  # 人口が多いほど空き家率が高い
+        )
+        
+        schools = SchoolData(
+            elementary_schools=max(5, int(area_data["pop"] / 30000)),
+            junior_high_schools=max(3, int(area_data["pop"] / 50000)),
+            high_schools=max(2, int(area_data["pop"] / 100000)),
+            universities=1 if area_data["pop"] > 300000 else 0
+        )
+        
+        childcare = ChildcareData(
+            nursery_schools=max(10, int(area_data["pop"] / 20000)),
+            kindergartens=max(5, int(area_data["pop"] / 40000)),
+            total_capacity=int(area_data["pop"] * 0.03),  # 人口の3%
+            waiting_children=0 if area_data["code"] in ["13101", "13102", "13120"] else int(area_data["pop"] / 10000),
+            acceptance_rate=90.0 if area_data["code"] in ["13101", "13102", "13120"] else 70.0
+        )
+        
+        parks = ParkData(
+            total_parks=max(10, int(area_data["area"] * 2)),
+            total_area_m2=area_data["area"] * 50000,  # 1km2あたり5万m2
+            park_per_capita=area_data["area"] * 50000 / area_data["pop"],
+            large_parks=max(1, int(area_data["area"] / 10))
+        )
+        
+        medical = MedicalData(
+            hospitals=max(2, int(area_data["pop"] / 100000)),
+            clinics=max(20, int(area_data["pop"] / 10000)),
+            doctors_per_1000=2.5 if area_data["code"] in ["13101", "13102", "13103"] else 2.0,
+            emergency_hospitals=max(1, int(area_data["pop"] / 200000))
+        )
+        
+        safety = SafetyData(
+            crime_rate_per_1000=0.5 if area_data["code"] in ["13112", "13115", "13120"] else 1.2,
+            disaster_risk_score=3.0 if area_data["code"] in ["13107", "13108", "13123"] else 2.0,  # 江東地域はリスク高
+            police_stations=max(1, int(area_data["pop"] / 100000)),
+            fire_stations=max(1, int(area_data["area"] / 5))
+        )
+        
+        culture = CultureData(
+            libraries=max(2, int(area_data["pop"] / 150000)),
+            museums=1 if area_data["pop"] > 200000 else 0,
+            community_centers=max(3, int(area_data["pop"] / 80000)),
+            sports_facilities=max(2, int(area_data["area"] / 10)),
+            library_books_per_capita=5.0 if area_data["code"] in ["13101", "13104", "13112"] else 3.0,
+            movie_theaters=2 if area_data["pop"] > 300000 else 1 if area_data["pop"] > 200000 else 0,
+            theme_parks=1 if area_data["code"] in ["13120", "13112"] else 0,
+            shopping_malls=3 if area_data["pop"] > 400000 else 2 if area_data["pop"] > 200000 else 1,
+            game_centers=2 if area_data["pop"] > 300000 else 1
+        )
+        
         area = Area(
             code=area_data["code"],
             name=area_data["name"],
@@ -80,29 +139,13 @@ async def init_all_areas():
             households=area_data["households"],
             population_density=area_data["density"],
             age_distribution=age_dist,
-            # 簡易データを追加
-            housing_data={
-                "rent_2ldk": 15.0 + (area_data["pop"] / 100000) * 2  # 人口に応じて調整
-            },
-            school_data={
-                "elementary_schools": max(5, int(area_data["pop"] / 30000)),
-                "junior_high_schools": max(3, int(area_data["pop"] / 50000))
-            },
-            childcare_data={
-                "waiting_children": 0 if area_data["code"] in ["13101", "13102", "13120"] else int(area_data["pop"] / 10000)
-            },
-            park_data={
-                "total_parks": max(10, int(area_data["area"] * 2))
-            },
-            medical_data={
-                "hospitals": max(2, int(area_data["pop"] / 100000))
-            },
-            safety_data={
-                "crime_rate": 0.5 if area_data["code"] in ["13112", "13115", "13120"] else 1.2
-            },
-            culture_data={
-                "libraries": max(2, int(area_data["pop"] / 150000))
-            }
+            housing_data=housing,
+            school_data=schools,
+            childcare_data=childcare,
+            park_data=parks,
+            medical_data=medical,
+            safety_data=safety,
+            culture_data=culture
         )
         
         await area.insert()
@@ -118,14 +161,43 @@ async def init_all_areas():
             {"可燃ごみ": "水・土", "不燃ごみ": "第1・3木曜", "資源": "金曜"},
         ]
         
+        # 練馬区（13120）は分別が厳しい
+        if area_data["code"] == "13120":
+            strictness = 4.5
+            separation_types = ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ", "プラスチック", "ペットボトル", "びん・缶"]
+            special_rules = [
+                "ペットボトルはキャップとラベルを外す",
+                "新聞・雑誌は紐で縛る",
+                "プラスチックは洗って乾かす",
+                "びんは色別に分ける",
+                "缶はアルミとスチールを分別"
+            ]
+            features = "非常に厳格な分別ルール"
+        # 世田谷区、杉並区も厳しめ
+        elif area_data["code"] in ["13112", "13115"]:
+            strictness = 3.5
+            separation_types = ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ", "プラスチック"]
+            special_rules = [
+                "ペットボトルはキャップとラベルを外す",
+                "新聞・雑誌は紐で縛る",
+                "プラスチックは洗って乾かす"
+            ]
+            features = "やや厳格な分別ルール"
+        # その他の区
+        else:
+            strictness = 2.0 + (i % 3) * 0.5
+            separation_types = ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"]
+            special_rules = ["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"]
+            features = "標準的な分別ルール"
+        
         waste_doc = WasteSeparation(
             area_code=area_data["code"],
             area_name=area_data["name"],
-            separation_types=["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
+            separation_types=separation_types,
             collection_days={**day_patterns[i % 3], "粗大ごみ": "申込制"},
-            strictness_level=2.0 + (i % 3) * 0.5,
-            special_rules=["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"],
-            features="標準的な分別ルール"
+            strictness_level=strictness,
+            special_rules=special_rules,
+            features=features
         )
         await waste_doc.insert()
     
