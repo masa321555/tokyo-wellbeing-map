@@ -3,15 +3,14 @@ MongoDB WasteSeparation model
 """
 from typing import List, Dict, Optional
 from datetime import datetime
-from beanie import Document, Link
+from beanie import Document
 from pydantic import Field
-
-from app.models_mongo.area import Area
 
 class WasteSeparation(Document):
     """ゴミ分別情報 - MongoDB版"""
-    # エリアへの参照
-    area: Link[Area]
+    # エリア情報
+    area_code: str
+    area_name: str
     
     # 分別種類
     separation_types: List[str] = []
@@ -35,7 +34,7 @@ class WasteSeparation(Document):
     class Settings:
         collection = "waste_separations"
         indexes = [
-            "area.$id"  # エリアIDでのインデックス
+            "area_code"  # エリアコードでのインデックス
         ]
     
     class Config:

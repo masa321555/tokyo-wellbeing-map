@@ -3,10 +3,8 @@ MongoDB CongestionData model
 """
 from typing import Dict, Optional
 from datetime import datetime
-from beanie import Document, Link
+from beanie import Document
 from pydantic import Field, BaseModel
-
-from app.models_mongo.area import Area
 
 class FacilityCongestion(BaseModel):
     """施設別混雑度"""
@@ -15,14 +13,19 @@ class FacilityCongestion(BaseModel):
 
 class CongestionData(Document):
     """混雑度データ - MongoDB版"""
-    # エリアへの参照
-    area: Link[Area]
+    # エリア情報
+    area_code: str
+    area_name: str
     
-    # 混雑度スコア
-    average_congestion: float = 50.0
-    peak_congestion: float = 70.0
-    weekend_congestion: float = 60.0
-    family_time_congestion: float = 55.0
+    # 時間別混雑度
+    weekday_congestion: Dict[str, int] = Field(default_factory=dict)
+    weekend_congestion: Dict[str, int] = Field(default_factory=dict)
+    
+    # 混雑要因
+    congestion_factors: list[str] = Field(default_factory=list)
+    peak_times: list[str] = Field(default_factory=list)
+    quiet_times: list[str] = Field(default_factory=list)
+    
     
     # 総合混雑度スコア（0-100）
     congestion_score: float = 60.0
@@ -37,7 +40,7 @@ class CongestionData(Document):
     class Settings:
         collection = "congestion_data"
         indexes = [
-            "area.$id",
+            "area_code",
             "congestion_score"
         ]
     

@@ -18,9 +18,18 @@ db = MongoDB()
 
 async def connect_to_mongo():
     """Create database connection"""
+    # Try to load from .env.mongo first
+    from dotenv import load_dotenv
+    load_dotenv('.env.mongo')
+    
     # MongoDB URLを環境変数から取得（デフォルトはローカル）
     MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-    db.client = AsyncIOMotorClient(MONGODB_URL)
+    
+    # SSL証明書の検証問題を回避（開発環境用）
+    db.client = AsyncIOMotorClient(
+        MONGODB_URL,
+        tlsAllowInvalidCertificates=True
+    )
     db.database = db.client.tokyo_wellbeing
     
     # Beanieの初期化（ODM）
