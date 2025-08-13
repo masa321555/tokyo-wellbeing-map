@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     
     # データベース設定
     DATABASE_URL: str = "sqlite:///./tokyo_wellbeing.db"
+    MONGODB_URL: str = "mongodb://localhost:27017"
     
     # Redis設定
     REDIS_URL: str = "redis://localhost:6379"
