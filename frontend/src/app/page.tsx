@@ -65,7 +65,7 @@ export default function Home() {
     addSelectedArea(area);
   };
 
-  const handleViewDetail = (areaId: number) => {
+  const handleViewDetail = (areaId: string) => {
     window.location.href = `/areas/${areaId}`;
   };
 
