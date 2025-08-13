@@ -45,13 +45,38 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration
+# CORS configuration - 修正版
 import json
-cors_origins_str = os.getenv("CORS_ORIGINS", '["http://localhost:3000","http://localhost:3001"]')
-try:
-    origins = json.loads(cors_origins_str)
-except:
-    origins = cors_origins_str.split(",") if "," in cors_origins_str else [cors_origins_str]
+
+# デフォルトのオリジン
+default_origins = [
+    "https://tokyo-wellbeing-map.vercel.app",
+    "https://tokyo-wellbeing-map-*.vercel.app",  # Vercelのプレビューデプロイ用
+    "http://localhost:3000",
+    "http://localhost:3001"
+]
+
+# 環境変数から追加のオリジンを取得
+cors_origins_str = os.getenv("CORS_ORIGINS", "")
+if cors_origins_str:
+    try:
+        # JSON配列形式の場合
+        additional_origins = json.loads(cors_origins_str)
+        if isinstance(additional_origins, list):
+            origins = list(set(default_origins + additional_origins))
+        else:
+            origins = default_origins
+    except:
+        # カンマ区切り形式の場合
+        if "," in cors_origins_str:
+            additional_origins = [o.strip() for o in cors_origins_str.split(",")]
+            origins = list(set(default_origins + additional_origins))
+        else:
+            origins = default_origins
+else:
+    origins = default_origins
+
+print(f"CORS Origins: {origins}")
 
 app.add_middleware(
     CORSMiddleware,
