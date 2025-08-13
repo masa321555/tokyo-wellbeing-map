@@ -67,24 +67,24 @@ class WellbeingCalculator:
         
         # 各カテゴリのスコアを計算（0-100）
         scores['rent'] = self._calculate_rent_score(
-            area.housing_data[0] if area.housing_data else None, 
+            area.housing_data if area.housing_data else None, 
             target_rent
         )
         scores['safety'] = self._calculate_safety_score(
-            area.safety_data[0] if area.safety_data else None
+            area.safety_data if area.safety_data else None
         )
         scores['education'] = self._calculate_education_score(
-            area.school_data[0] if area.school_data else None,
-            area.childcare_data[0] if area.childcare_data else None
+            area.school_data if area.school_data else None,
+            area.childcare_data if area.childcare_data else None
         )
         scores['parks'] = self._calculate_parks_score(
-            area.park_data[0] if area.park_data else None
+            area.park_data if area.park_data else None
         )
         scores['medical'] = self._calculate_medical_score(
-            area.medical_data[0] if area.medical_data else None
+            area.medical_data if area.medical_data else None
         )
         scores['culture'] = self._calculate_culture_score(
-            area.culture_data[0] if area.culture_data else None
+            area.culture_data if area.culture_data else None
         )
         
         # 重み付き総合スコアを計算
@@ -143,9 +143,11 @@ class WellbeingCalculator:
         # 犯罪率5件/千人を100点、20件/千人を0点とする
         score = 100 - ((crime_rate - 5) * 6.67)
         
-        # 防犯設備ボーナス
-        if safety_data.security_cameras:
-            score += min(10, safety_data.security_cameras / 100)
+        # 警察署・消防署ボーナス
+        if hasattr(safety_data, 'police_stations') and safety_data.police_stations:
+            score += min(5, safety_data.police_stations / 10)
+        if hasattr(safety_data, 'fire_stations') and safety_data.fire_stations:
+            score += min(5, safety_data.fire_stations / 5)
             
         return min(100, max(0, score))
     
@@ -170,9 +172,9 @@ class WellbeingCalculator:
             score += min(100, school_density * 5)
             components += 1
             
-            # 図書館ボーナス
-            if school_data.libraries:
-                score += min(20, school_data.libraries * 10)
+            # 高校ボーナス
+            if hasattr(school_data, 'high_schools') and school_data.high_schools:
+                score += min(20, school_data.high_schools * 10)
                 
         if childcare_data:
             # 待機児童スコア（少ないほど高い）
@@ -195,15 +197,12 @@ class WellbeingCalculator:
         score = 0
         
         # 一人当たり公園面積（10m²を100点基準）
-        if park_data.parks_per_capita:
-            score = min(100, (park_data.parks_per_capita / 10) * 100)
-            
-        # 子供向け施設ボーナス
-        if park_data.children_parks:
-            score += min(20, park_data.children_parks * 2)
-            
-        if park_data.with_playground:
-            score += min(10, park_data.with_playground)
+        if hasattr(park_data, 'park_per_capita') and park_data.park_per_capita:
+            score = min(100, (park_data.park_per_capita / 10) * 100)
+        
+        # 公園数ボーナス
+        if hasattr(park_data, 'total_parks') and park_data.total_parks:
+            score += min(20, park_data.total_parks / 5)
             
         return min(100, max(0, score))
     
@@ -219,16 +218,12 @@ class WellbeingCalculator:
             # 2.5人/千人を100点基準
             score = min(100, (medical_data.doctors_per_1000 / 2.5) * 100)
             
-        # 小児科・産婦人科ボーナス
-        if medical_data.pediatric_clinics:
-            score += min(20, medical_data.pediatric_clinics * 5)
+        # 病院・クリニックボーナス
+        if hasattr(medical_data, 'hospitals') and medical_data.hospitals:
+            score += min(10, medical_data.hospitals * 2)
             
-        if medical_data.obstetric_clinics:
-            score += min(10, medical_data.obstetric_clinics * 5)
-            
-        # 救急対応ボーナス
-        if medical_data.avg_ambulance_time and medical_data.avg_ambulance_time < 10:
-            score += 10
+        if hasattr(medical_data, 'clinics') and medical_data.clinics:
+            score += min(10, medical_data.clinics / 10)
             
         return min(100, max(0, score))
     

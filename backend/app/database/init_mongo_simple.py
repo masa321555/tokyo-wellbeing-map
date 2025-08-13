@@ -3,10 +3,12 @@ MongoDB初期化スクリプト（簡略版）
 """
 import asyncio
 import os
+import json
 from app.database.mongodb import connect_to_mongo, close_mongo_connection, db
 from app.models_mongo.area import Area, HousingData, ParkData, SchoolData, SafetyData, MedicalData, CultureData, ChildcareData
 from app.models_mongo.waste_separation import WasteSeparation
 from app.models_mongo.congestion import CongestionData
+from app.services.tokyo_congestion_service import tokyo_congestion_service
 from beanie import init_beanie
 
 async def init_mongodb():
@@ -29,31 +31,38 @@ async def init_all_areas():
     await WasteSeparation.delete_all()
     await CongestionData.delete_all()
     
-    # 23区の基本データ（SQLite版と同じデータ）
+    # tokyo_age_population_ckan_simple.jsonから年齢分布データを読み込む
+    json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'tokyo_age_population_ckan_simple.json')
+    with open(json_path, 'r', encoding='utf-8') as f:
+        age_population_data = json.load(f)
+    
+    # 23区の基本データ
+    # データソース: 東京都総務局統計部「東京都の人口（推計）」及び「住民基本台帳による世帯と人口」
+    # 更新日: 令和6年4月1日現在
     areas_data = [
-        {"code": "13101", "name": "千代田区", "lat": 35.6940, "lng": 139.7534, "area": 11.66, "pop": 67000, "households": 38500, "density": 5748.7},
-        {"code": "13102", "name": "中央区", "lat": 35.6706, "lng": 139.7720, "area": 10.21, "pop": 170000, "households": 93900, "density": 16650.3},
-        {"code": "13103", "name": "港区", "lat": 35.6581, "lng": 139.7515, "area": 20.37, "pop": 260000, "households": 146000, "density": 12759.8},
-        {"code": "13104", "name": "新宿区", "lat": 35.6938, "lng": 139.7036, "area": 18.22, "pop": 350000, "households": 220000, "density": 19209.0},
-        {"code": "13105", "name": "文京区", "lat": 35.7081, "lng": 139.7524, "area": 11.29, "pop": 240000, "households": 122000, "density": 21257.0},
-        {"code": "13106", "name": "台東区", "lat": 35.7121, "lng": 139.7799, "area": 10.11, "pop": 210000, "households": 124000, "density": 20771.5},
-        {"code": "13107", "name": "墨田区", "lat": 35.7107, "lng": 139.8013, "area": 13.77, "pop": 275000, "households": 140000, "density": 19971.5},
-        {"code": "13108", "name": "江東区", "lat": 35.6731, "lng": 139.8171, "area": 40.16, "pop": 525000, "households": 263000, "density": 13073.9},
-        {"code": "13109", "name": "品川区", "lat": 35.6090, "lng": 139.7302, "area": 22.84, "pop": 420000, "households": 235000, "density": 18389.8},
-        {"code": "13110", "name": "目黒区", "lat": 35.6414, "lng": 139.6982, "area": 14.67, "pop": 285000, "households": 157000, "density": 19428.6},
-        {"code": "13111", "name": "大田区", "lat": 35.5614, "lng": 139.7161, "area": 60.66, "pop": 740000, "households": 396000, "density": 12199.0},
-        {"code": "13112", "name": "世田谷区", "lat": 35.6464, "lng": 139.6530, "area": 58.05, "pop": 940000, "households": 490000, "density": 16194.7},
-        {"code": "13113", "name": "渋谷区", "lat": 35.6639, "lng": 139.6982, "area": 15.11, "pop": 240000, "households": 146000, "density": 15883.0},
-        {"code": "13114", "name": "中野区", "lat": 35.7074, "lng": 139.6637, "area": 15.59, "pop": 340000, "households": 210000, "density": 21808.9},
-        {"code": "13115", "name": "杉並区", "lat": 35.6994, "lng": 139.6364, "area": 34.06, "pop": 590000, "households": 330000, "density": 17320.0},
-        {"code": "13116", "name": "豊島区", "lat": 35.7260, "lng": 139.7166, "area": 13.01, "pop": 300000, "households": 183000, "density": 23059.2},
-        {"code": "13117", "name": "北区", "lat": 35.7528, "lng": 139.7337, "area": 20.61, "pop": 355000, "households": 195000, "density": 17226.2},
-        {"code": "13118", "name": "荒川区", "lat": 35.7362, "lng": 139.7830, "area": 10.16, "pop": 220000, "households": 116000, "density": 21653.5},
-        {"code": "13119", "name": "板橋区", "lat": 35.7512, "lng": 139.7095, "area": 32.22, "pop": 585000, "households": 315000, "density": 18155.2},
-        {"code": "13120", "name": "練馬区", "lat": 35.7357, "lng": 139.6516, "area": 48.08, "pop": 750000, "households": 380000, "density": 15598.0},
-        {"code": "13121", "name": "足立区", "lat": 35.7751, "lng": 139.8046, "area": 53.25, "pop": 695000, "households": 350000, "density": 13051.6},
-        {"code": "13122", "name": "葛飾区", "lat": 35.7435, "lng": 139.8473, "area": 34.80, "pop": 465000, "households": 235000, "density": 13362.1},
-        {"code": "13123", "name": "江戸川区", "lat": 35.7068, "lng": 139.8687, "area": 49.90, "pop": 700000, "households": 340000, "density": 14028.1},
+        {"code": "13101", "name": "千代田区", "lat": 35.6940, "lng": 139.7534, "area": 11.66, "pop": 68856, "households": 40940, "density": 5905.8},
+        {"code": "13102", "name": "中央区", "lat": 35.6706, "lng": 139.7720, "area": 10.21, "pop": 181845, "households": 104227, "density": 17813.6},
+        {"code": "13103", "name": "港区", "lat": 35.6581, "lng": 139.7515, "area": 20.36, "pop": 267250, "households": 154970, "density": 13124.5},
+        {"code": "13104", "name": "新宿区", "lat": 35.6938, "lng": 139.7036, "area": 18.22, "pop": 349318, "households": 228690, "density": 19169.9},
+        {"code": "13105", "name": "文京区", "lat": 35.7081, "lng": 139.7524, "area": 11.29, "pop": 232790, "households": 130035, "density": 20619.7},
+        {"code": "13106", "name": "台東区", "lat": 35.7121, "lng": 139.7799, "area": 10.11, "pop": 213486, "households": 131270, "density": 21115.2},
+        {"code": "13107", "name": "墨田区", "lat": 35.7107, "lng": 139.8013, "area": 13.77, "pop": 285784, "households": 154370, "density": 20753.8},
+        {"code": "13108", "name": "江東区", "lat": 35.6731, "lng": 139.8171, "area": 42.99, "pop": 539439, "households": 288890, "density": 12544.1},
+        {"code": "13109", "name": "品川区", "lat": 35.6090, "lng": 139.7302, "area": 22.85, "pop": 410260, "households": 235990, "density": 17952.5},
+        {"code": "13110", "name": "目黒区", "lat": 35.6414, "lng": 139.6982, "area": 14.67, "pop": 280126, "households": 160480, "density": 19096.3},
+        {"code": "13111", "name": "大田区", "lat": 35.5614, "lng": 139.7161, "area": 61.86, "pop": 736652, "households": 413090, "density": 11909.8},
+        {"code": "13112", "name": "世田谷区", "lat": 35.6464, "lng": 139.6530, "area": 58.05, "pop": 920596, "households": 500550, "density": 15857.6},
+        {"code": "13113", "name": "渋谷区", "lat": 35.6639, "lng": 139.6982, "area": 15.11, "pop": 231499, "households": 148870, "density": 15317.7},
+        {"code": "13114", "name": "中野区", "lat": 35.7074, "lng": 139.6637, "area": 15.59, "pop": 338800, "households": 215520, "density": 21731.5},
+        {"code": "13115", "name": "杉並区", "lat": 35.6994, "lng": 139.6364, "area": 34.06, "pop": 574841, "households": 336890, "density": 16880.4},
+        {"code": "13116", "name": "豊島区", "lat": 35.7260, "lng": 139.7166, "area": 13.01, "pop": 292339, "households": 186640, "density": 22464.3},
+        {"code": "13117", "name": "北区", "lat": 35.7528, "lng": 139.7337, "area": 20.61, "pop": 358516, "households": 203170, "density": 17393.5},
+        {"code": "13118", "name": "荒川区", "lat": 35.7362, "lng": 139.7830, "area": 10.16, "pop": 219813, "households": 122730, "density": 21635.3},
+        {"code": "13119", "name": "板橋区", "lat": 35.7512, "lng": 139.7095, "area": 32.22, "pop": 574768, "households": 325090, "density": 17837.4},
+        {"code": "13120", "name": "練馬区", "lat": 35.7357, "lng": 139.6516, "area": 48.08, "pop": 743428, "households": 395140, "density": 15458.8},
+        {"code": "13121", "name": "足立区", "lat": 35.7751, "lng": 139.8046, "area": 53.25, "pop": 694725, "households": 367480, "density": 13048.4},
+        {"code": "13122", "name": "葛飾区", "lat": 35.7435, "lng": 139.8473, "area": 34.80, "pop": 467922, "households": 242760, "density": 13446.6},
+        {"code": "13123", "name": "江戸川区", "lat": 35.7068, "lng": 139.8687, "area": 49.90, "pop": 690476, "households": 352230, "density": 13835.2},
     ]
     
     # SQLite版のサンプルデータ
@@ -218,42 +227,72 @@ async def init_all_areas():
         "13102": {"libraries": 8, "museums": 6, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 8},
         "13103": {"libraries": 10, "museums": 12, "community_centers": 15, "sports_facilities": 12, "movie_theaters": 5, "theme_parks": 0, "shopping_malls": 8, "game_centers": 10},
         "13104": {"libraries": 12, "museums": 10, "community_centers": 18, "sports_facilities": 15, "movie_theaters": 8, "theme_parks": 0, "shopping_malls": 10, "game_centers": 15},
-        "13105": {"libraries": 11, "museums": 9, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 4, "game_centers": 6},
-        "13106": {"libraries": 8, "museums": 15, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 12},
+        "13105": {"libraries": 11, "museums": 9, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 3, "theme_parks": 1, "shopping_malls": 4, "game_centers": 6},  # 文京区: 東京ドームシティ
+        "13106": {"libraries": 8, "museums": 15, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 12},  # 台東区: 浅草花やしき
         "13107": {"libraries": 9, "museums": 5, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 2, "theme_parks": 0, "shopping_malls": 3, "game_centers": 7},
         "13108": {"libraries": 15, "museums": 8, "community_centers": 20, "sports_facilities": 18, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 8, "game_centers": 10},
         "13109": {"libraries": 12, "museums": 6, "community_centers": 16, "sports_facilities": 14, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 9},
-        "13110": {"libraries": 10, "museums": 5, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 4, "game_centers": 6},
-        "13111": {"libraries": 16, "museums": 7, "community_centers": 25, "sports_facilities": 20, "movie_theaters": 6, "theme_parks": 0, "shopping_malls": 9, "game_centers": 12},
-        "13112": {"libraries": 21, "museums": 10, "community_centers": 30, "sports_facilities": 25, "movie_theaters": 8, "theme_parks": 1, "shopping_malls": 12, "game_centers": 15},
-        "13113": {"libraries": 9, "museums": 6, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 5, "theme_parks": 0, "shopping_malls": 7, "game_centers": 10},
-        "13114": {"libraries": 10, "museums": 4, "community_centers": 14, "sports_facilities": 11, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 8},
-        "13115": {"libraries": 14, "museums": 7, "community_centers": 20, "sports_facilities": 16, "movie_theaters": 5, "theme_parks": 0, "shopping_malls": 7, "game_centers": 10},
-        "13116": {"libraries": 9, "museums": 5, "community_centers": 11, "sports_facilities": 9, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 12},
-        "13117": {"libraries": 11, "museums": 5, "community_centers": 15, "sports_facilities": 12, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 4, "game_centers": 7},
-        "13118": {"libraries": 7, "museums": 3, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 2, "theme_parks": 0, "shopping_malls": 3, "game_centers": 5},
-        "13119": {"libraries": 13, "museums": 6, "community_centers": 22, "sports_facilities": 18, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 9},
-        "13120": {"libraries": 17, "museums": 8, "community_centers": 28, "sports_facilities": 22, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 8, "game_centers": 10},
-        "13121": {"libraries": 15, "museums": 6, "community_centers": 25, "sports_facilities": 20, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 8},
-        "13122": {"libraries": 12, "museums": 4, "community_centers": 20, "sports_facilities": 16, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 7},
-        "13123": {"libraries": 14, "museums": 5, "community_centers": 22, "sports_facilities": 18, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 8},
+        "13110": {"libraries": 10, "museums": 7, "community_centers": 14, "sports_facilities": 12, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 8},
+        "13111": {"libraries": 16, "museums": 5, "community_centers": 22, "sports_facilities": 20, "movie_theaters": 6, "theme_parks": 0, "shopping_malls": 9, "game_centers": 12},
+        "13112": {"libraries": 21, "museums": 9, "community_centers": 26, "sports_facilities": 24, "movie_theaters": 7, "theme_parks": 0, "shopping_malls": 11, "game_centers": 14},
+        "13113": {"libraries": 9, "museums": 8, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 6, "theme_parks": 0, "shopping_malls": 7, "game_centers": 10},
+        "13114": {"libraries": 10, "museums": 4, "community_centers": 14, "sports_facilities": 12, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 4, "game_centers": 8},
+        "13115": {"libraries": 14, "museums": 6, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 9},
+        "13116": {"libraries": 9, "museums": 5, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 5, "theme_parks": 2, "shopping_malls": 7, "game_centers": 11},  # 豊島区: サンシャインシティ、ナンジャタウン
+        "13117": {"libraries": 11, "museums": 4, "community_centers": 15, "sports_facilities": 13, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 7},
+        "13118": {"libraries": 7, "museums": 3, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 2, "theme_parks": 1, "shopping_malls": 3, "game_centers": 5},  # 荒川区: あらかわ遊園
+        "13119": {"libraries": 13, "museums": 5, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 7, "game_centers": 9},
+        "13120": {"libraries": 17, "museums": 6, "community_centers": 22, "sports_facilities": 20, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 8, "game_centers": 10},  # 練馬区: ハリー・ポッター スタジオツアー
+        "13121": {"libraries": 15, "museums": 4, "community_centers": 20, "sports_facilities": 18, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 7, "game_centers": 8},
+        "13122": {"libraries": 12, "museums": 3, "community_centers": 16, "sports_facilities": 14, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 7},
+        "13123": {"libraries": 14, "museums": 4, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 8},  # 江戸川区: 葛西臨海公園
     }
     
     # 各区のデータを作成
     for area_data in areas_data:
         area_code = area_data["code"]
         
-        # 年齢分布データ（簡易版）
-        age_dist = {
-            "0-9": int(area_data["pop"] * 0.08),
-            "10-19": int(area_data["pop"] * 0.07),
-            "20-29": int(area_data["pop"] * 0.17),
-            "30-39": int(area_data["pop"] * 0.18),
-            "40-49": int(area_data["pop"] * 0.16),
-            "50-59": int(area_data["pop"] * 0.12),
-            "60-69": int(area_data["pop"] * 0.10),
-            "70+": int(area_data["pop"] * 0.12)
-        }
+        # 年齢分布データをJSONから取得
+        if area_data["name"] in age_population_data:
+            json_age_data = age_population_data[area_data["name"]]
+            # すべての年齢分布データを含める
+            age_dist = {
+                "0-4": json_age_data.get("0-4", 0),
+                "5-9": json_age_data.get("5-9", 0),
+                "10-14": json_age_data.get("10-14", 0),
+                "15-19": json_age_data.get("15-19", 0),
+                "20-29": json_age_data.get("20-29", 0),
+                "30-39": json_age_data.get("30-39", 0),
+                "40-49": json_age_data.get("40-49", 0),
+                "50-59": json_age_data.get("50-59", 0),
+                "60-64": json_age_data.get("60-64", 0),
+                "65-74": json_age_data.get("65-74", 0),
+                "75+": json_age_data.get("75+", 0),
+                "0-14": json_age_data.get("0-14", 0),
+                "15-64": json_age_data.get("15-64", 0),
+                "65+": json_age_data.get("65+", 0)
+            }
+            # 年齢別データから総人口を計算して更新
+            total_population = age_dist["0-14"] + age_dist["15-64"] + age_dist["65+"]
+            area_data["pop"] = total_population
+        else:
+            # フォールバック用のデフォルトデータ
+            age_dist = {
+                "0-4": int(area_data["pop"] * 0.05),
+                "5-9": int(area_data["pop"] * 0.05),
+                "10-14": int(area_data["pop"] * 0.05),
+                "15-19": int(area_data["pop"] * 0.05),
+                "20-29": int(area_data["pop"] * 0.15),
+                "30-39": int(area_data["pop"] * 0.15),
+                "40-49": int(area_data["pop"] * 0.15),
+                "50-59": int(area_data["pop"] * 0.10),
+                "60-64": int(area_data["pop"] * 0.05),
+                "65-74": int(area_data["pop"] * 0.10),
+                "75+": int(area_data["pop"] * 0.10),
+                "0-14": int(area_data["pop"] * 0.15),
+                "15-64": int(area_data["pop"] * 0.65),
+                "65+": int(area_data["pop"] * 0.20)
+            }
         
         # 各データを適切なモデルインスタンスとして作成（オリジナルデータを使用）
         housing = HousingData(
@@ -279,34 +318,28 @@ async def init_all_areas():
             kindergartens=childcare_data[area_code]["kindergartens"],
             total_capacity=int(childcare_data[area_code]["nursery_schools"] * 60 + childcare_data[area_code]["kindergartens"] * 30),
             waiting_children=childcare_data[area_code]["waiting_children"],
-            acceptance_rate=100.0 if childcare_data[area_code]["waiting_children"] == 0 else 85.0,
-            child_support_centers=childcare_data[area_code]["child_support_centers"]
+            acceptance_rate=100.0 if childcare_data[area_code]["waiting_children"] == 0 else 85.0
         )
         
         parks = ParkData(
             total_parks=parks_data[area_code]["total_parks"],
             total_area_m2=parks_data[area_code]["total_area_sqm"],
             park_per_capita=parks_data[area_code]["total_area_sqm"] / area_data["pop"],
-            large_parks=max(1, parks_data[area_code]["total_parks"] // 10),
-            children_parks=parks_data[area_code]["children_parks"],
-            with_playground=parks_data[area_code]["with_playground"]
+            large_parks=max(1, parks_data[area_code]["total_parks"] // 10)
         )
         
         medical = MedicalData(
             hospitals=medical_data[area_code]["hospitals"],
             clinics=medical_data[area_code]["clinics"],
             doctors_per_1000=medical_data[area_code]["doctors_per_1000"],
-            emergency_hospitals=max(1, medical_data[area_code]["hospitals"] // 10),
-            pediatric_clinics=medical_data[area_code]["pediatric_clinics"]
+            emergency_hospitals=max(1, medical_data[area_code]["hospitals"] // 10)
         )
         
         safety = SafetyData(
             crime_rate_per_1000=safety_data[area_code]["crime_rate_per_1000"],
             disaster_risk_score=3.0 if area_code in ["13107", "13108", "13123"] else 2.0,
             police_stations=safety_data[area_code]["police_boxes"],
-            fire_stations=max(1, int(area_data["area"] / 5)),
-            total_crimes=safety_data[area_code]["total_crimes"],
-            security_cameras=safety_data[area_code]["security_cameras"]
+            fire_stations=max(1, int(area_data["area"] / 5))
         )
         
         culture = CultureData(
@@ -345,75 +378,47 @@ async def init_all_areas():
     print(f"Created {len(areas_data)} areas")
     
     # ゴミ分別データを追加
-    for i, area_data in enumerate(areas_data):
-        # 曜日のパターンを変える
-        day_patterns = [
-            {"可燃ごみ": "月・木", "不燃ごみ": "第1・3水曜", "資源": "火曜"},
-            {"可燃ごみ": "火・金", "不燃ごみ": "第2・4水曜", "資源": "月曜"},
-            {"可燃ごみ": "水・土", "不燃ごみ": "第1・3木曜", "資源": "金曜"},
-        ]
-        
-        # 練馬区（13120）は分別が厳しい
-        if area_data["code"] == "13120":
-            strictness = 4.5
-            separation_types = ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ", "プラスチック", "ペットボトル", "びん・缶"]
-            special_rules = [
-                "ペットボトルはキャップとラベルを外す",
-                "新聞・雑誌は紐で縛る",
-                "プラスチックは洗って乾かす",
-                "びんは色別に分ける",
-                "缶はアルミとスチールを分別"
-            ]
-            features = "非常に厳格な分別ルール"
-        # 世田谷区、杉並区も厳しめ
-        elif area_data["code"] in ["13112", "13115"]:
-            strictness = 3.5
-            separation_types = ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ", "プラスチック"]
-            special_rules = [
-                "ペットボトルはキャップとラベルを外す",
-                "新聞・雑誌は紐で縛る",
-                "プラスチックは洗って乾かす"
-            ]
-            features = "やや厳格な分別ルール"
-        # その他の区
-        else:
-            strictness = 2.0 + (i % 3) * 0.5
-            separation_types = ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"]
-            special_rules = ["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"]
-            features = "標準的な分別ルール"
-        
-        waste_doc = WasteSeparation(
-            area_code=area_data["code"],
-            area_name=area_data["name"],
-            separation_types=separation_types,
-            collection_days={**day_patterns[i % 3], "粗大ごみ": "申込制"},
-            strictness_level=strictness,
-            special_rules=special_rules,
-            features=features
-        )
-        await waste_doc.insert()
+    from app.data.waste_separation_rules import WASTE_SEPARATION_RULES
+    
+    for area_data in areas_data:
+        code = area_data["code"]
+        if code in WASTE_SEPARATION_RULES:
+            rule = WASTE_SEPARATION_RULES[code]
+            waste_doc = WasteSeparation(
+                area_code=code,
+                area_name=area_data["name"],
+                separation_types=rule["separation_types"],
+                collection_days=rule["collection_days"],
+                strictness_level=rule["strictness_level"],
+                special_rules=rule["special_rules"],
+                features=rule["features"]
+            )
+            await waste_doc.insert()
     
     print(f"Created waste separation data for {len(areas_data)} areas")
     
+    # 東京都オープンデータサービスを使用して混雑度データを生成
+    
     # 混雑度データを追加
     for area_data in areas_data:
+        area_code = area_data["code"]
+        
+        # 東京都オープンデータに基づいた混雑度を計算
+        congestion_result = tokyo_congestion_service.calculate_area_congestion(
+            area_code,
+            area_data["name"]
+        )
+        
         congestion_doc = CongestionData(
-            area_code=area_data["code"],
+            area_code=area_code,
             area_name=area_data["name"],
-            station_congestion={
-                "morning": 70 + (area_data["density"] / 1000),  # 人口密度に応じて調整
-                "evening": 75 + (area_data["density"] / 1000),
-                "weekend": 50
-            },
-            road_congestion={
-                "morning": 60 + (area_data["density"] / 2000),
-                "evening": 65 + (area_data["density"] / 2000),
-                "weekend": 40
-            },
-            popular_spots=[],
-            congestion_factors=["住宅地"],
-            peak_times=["平日 7:30-9:00", "平日 18:00-19:30"],
-            quiet_times=["週末午前", "平日 10:00-16:00"]
+            weekday_congestion=congestion_result["weekday_congestion"],
+            weekend_congestion=congestion_result["weekend_congestion"],
+            congestion_factors=congestion_result["congestion_factors"],
+            congestion_score=congestion_result["congestion_score"],
+            peak_times=congestion_result["peak_times"],
+            quiet_times=congestion_result["quiet_times"],
+            facility_congestion=congestion_result["facility_congestion"]
         )
         await congestion_doc.insert()
     

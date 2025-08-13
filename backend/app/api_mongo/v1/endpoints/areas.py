@@ -134,6 +134,44 @@ async def get_area_schools(area_id_or_code: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/compare", response_model=dict)
+async def compare_areas(request: dict):
+    """複数エリアの比較データを取得"""
+    try:
+        area_ids = request.get("area_ids", [])
+        if not area_ids:
+            raise HTTPException(status_code=400, detail="area_ids is required")
+        
+        areas_data = []
+        for area_id in area_ids:
+            # まずIDとして検索を試みる
+            area = None
+            if len(area_id) == 24:
+                try:
+                    area = await Area.get(area_id)
+                except:
+                    pass
+            
+            # IDで見つからなかった場合はコードで検索
+            if not area:
+                area = await Area.find_one(Area.code == str(area_id))
+            
+            if area:
+                # エリアデータを辞書形式で追加
+                area_dict = area.model_dump(mode='json')
+                # IDを文字列として確保
+                area_dict['id'] = str(area.id)
+                areas_data.append(area_dict)
+        
+        return {
+            "areas": areas_data,
+            "comparison_count": len(areas_data)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/{area_id_or_code}/safety", response_model=dict)
 async def get_area_safety(area_id_or_code: str):
     """特定エリアの治安情報を取得"""

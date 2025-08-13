@@ -7,7 +7,8 @@ from app.api_mongo.v1.endpoints import (
     simulation,
     admin,
     waste_separation,
-    congestion
+    congestion,
+    congestion_google
 )
 
 api_router = APIRouter()
@@ -19,3 +20,4 @@ api_router.include_router(simulation.router, prefix="/simulation", tags=["simula
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
 api_router.include_router(waste_separation.router, prefix="/waste-separation", tags=["waste"])
 api_router.include_router(congestion.router, prefix="/congestion", tags=["congestion"])
+api_router.include_router(congestion_google.router, prefix="/congestion-google", tags=["congestion-google"])

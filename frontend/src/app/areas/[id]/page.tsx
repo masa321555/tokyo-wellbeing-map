@@ -18,6 +18,7 @@ export default function AreaDetailPage() {
   const [area, setArea] = useState<AreaDetail | null>(null);
   const [wellbeingScore, setWellbeingScore] = useState<WellbeingScore | null>(null);
   const [congestionData, setCongestionData] = useState<any>(null);
+  const [liveCongestionData, setLiveCongestionData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,6 +38,16 @@ export default function AreaDetailPage() {
       setArea(areaData);
       setWellbeingScore(scoreData);
       setCongestionData(congestionInfo);
+      
+      // Google Places APIからリアルタイム混雑度データを取得
+      if (areaData?.code) {
+        try {
+          const liveData = await congestionApi.getLiveCongestion(areaData.code);
+          setLiveCongestionData(liveData);
+        } catch (error) {
+          console.error('Failed to load live congestion data:', error);
+        }
+      }
     } catch (error) {
       console.error('Failed to load area data:', error);
     } finally {
@@ -200,12 +211,14 @@ export default function AreaDetailPage() {
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-600">一人当たり面積</dt>
-                <dd className="font-medium">{area.park_data.parks_per_capita?.toFixed(1)}m²</dd>
+                <dd className="font-medium">{area.park_data.park_per_capita?.toFixed(1)}m²</dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-gray-600">児童公園数</dt>
-                <dd className="font-medium">{area.park_data.children_parks}箇所</dd>
-              </div>
+              {area.park_data.large_parks !== undefined && (
+                <div className="flex justify-between">
+                  <dt className="text-gray-600">大規模公園数</dt>
+                  <dd className="font-medium">{area.park_data.large_parks}箇所</dd>
+                </div>
+              )}
             </dl>
           </div>
         )}
@@ -220,12 +233,12 @@ export default function AreaDetailPage() {
                 <dd className="font-medium">{area.safety_data.crime_rate_per_1000?.toFixed(1)}件/千人</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-600">交番数</dt>
-                <dd className="font-medium">{area.safety_data.police_boxes}箇所</dd>
+                <dt className="text-gray-600">警察署数</dt>
+                <dd className="font-medium">{area.safety_data.police_stations}箇所</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-600">防犯カメラ</dt>
-                <dd className="font-medium">{area.safety_data.security_cameras}台</dd>
+                <dt className="text-gray-600">消防署数</dt>
+                <dd className="font-medium">{area.safety_data.fire_stations}箇所</dd>
               </div>
             </dl>
           </div>
@@ -241,8 +254,8 @@ export default function AreaDetailPage() {
                 <dd className="font-medium">{area.medical_data.hospitals}施設</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-600">小児科数</dt>
-                <dd className="font-medium">{area.medical_data.pediatric_clinics}施設</dd>
+                <dt className="text-gray-600">診療所数</dt>
+                <dd className="font-medium">{area.medical_data.clinics}施設</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-600">救急病院</dt>
@@ -307,7 +320,16 @@ export default function AreaDetailPage() {
       )}
 
       {/* 混雑度情報 */}
-      {congestionData && (
+      {liveCongestionData ? (
+        <div className="mt-8">
+          <CongestionDisplay congestion={liveCongestionData} />
+          {liveCongestionData.data_source === 'google_places_api' && (
+            <p className="text-xs text-gray-500 mt-2 text-right">
+              データソース: Google Places API
+            </p>
+          )}
+        </div>
+      ) : congestionData && (
         <div className="mt-8">
           <CongestionDisplay congestion={congestionData.congestion} />
         </div>

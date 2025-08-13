@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "東京ウェルビーイング居住地マップ",
+  title: "東京ウェルビーイング",
   description: "子育て世代のための東京都内居住地選びサポートツール",
 };
 
@@ -32,17 +32,11 @@ export default function RootLayout({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <h1 className="text-xl font-bold text-gray-900">
-                  東京ウェルビーイング居住地マップ
+                  東京ウェルビーイング
                 </h1>
                 <nav className="flex space-x-8">
-                  <a href="/" className="text-gray-700 hover:text-gray-900">
-                    ホーム
-                  </a>
                   <a href="/search" className="text-gray-700 hover:text-gray-900">
                     検索
-                  </a>
-                  <a href="/compare" className="text-gray-700 hover:text-gray-900">
-                    比較
                   </a>
                   <a href="/simulation" className="text-gray-700 hover:text-gray-900">
                     シミュレーション

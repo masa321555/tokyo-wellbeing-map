@@ -162,7 +162,9 @@ async def search_areas(request: SearchRequest):
             "code": area.code,
             "name": area.name,
             "population": area.population,
+            "area_km2": area.area_km2,
             "wellbeing_score": score_data['total_score'],
+            "total_score": score_data['total_score'],  # 互換性のため両方設定
             "category_scores": score_data['category_scores']
         }
         
@@ -183,12 +185,21 @@ async def search_areas(request: SearchRequest):
                 "elementary_schools": area.school_data.elementary_schools,
                 "junior_high_schools": area.school_data.junior_high_schools
             }
+            # 互換性のためトップレベルにも追加
+            area_data["elementary_schools"] = area.school_data.elementary_schools
+            area_data["junior_high_schools"] = area.school_data.junior_high_schools
         
         if area.childcare_data:
             area_data["childcare_info"] = {
                 "nursery_schools": area.childcare_data.nursery_schools,
                 "waiting_children": area.childcare_data.waiting_children
             }
+            # 互換性のためトップレベルにも追加
+            area_data["waiting_children"] = area.childcare_data.waiting_children
+        
+        # 家賃情報を互換性のためトップレベルにも追加
+        if area.housing_data:
+            area_data["rent_2ldk"] = area.housing_data.rent_2ldk
         
         results.append(area_data)
     

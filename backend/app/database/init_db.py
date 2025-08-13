@@ -9,30 +9,32 @@ import json
 
 
 # 東京23区の基本データ
+# データソース: 東京都総務局統計部「東京都の人口（推計）」及び「住民基本台帳による世帯と人口」
+# 更新日: 令和6年4月1日現在
 TOKYO_WARDS = [
-    {"code": "13101", "name": "千代田区", "name_kana": "ちよだく", "center_lat": 35.6940, "center_lng": 139.7534, "area_km2": 11.66, "population": 67000},
-    {"code": "13102", "name": "中央区", "name_kana": "ちゅうおうく", "center_lat": 35.6706, "center_lng": 139.7720, "area_km2": 10.21, "population": 170000},
-    {"code": "13103", "name": "港区", "name_kana": "みなとく", "center_lat": 35.6581, "center_lng": 139.7515, "area_km2": 20.37, "population": 260000},
-    {"code": "13104", "name": "新宿区", "name_kana": "しんじゅくく", "center_lat": 35.6938, "center_lng": 139.7036, "area_km2": 18.22, "population": 350000},
-    {"code": "13105", "name": "文京区", "name_kana": "ぶんきょうく", "center_lat": 35.7081, "center_lng": 139.7524, "area_km2": 11.29, "population": 240000},
-    {"code": "13106", "name": "台東区", "name_kana": "たいとうく", "center_lat": 35.7121, "center_lng": 139.7799, "area_km2": 10.11, "population": 210000},
-    {"code": "13107", "name": "墨田区", "name_kana": "すみだく", "center_lat": 35.7107, "center_lng": 139.8013, "area_km2": 13.77, "population": 275000},
-    {"code": "13108", "name": "江東区", "name_kana": "こうとうく", "center_lat": 35.6731, "center_lng": 139.8171, "area_km2": 40.16, "population": 525000},
-    {"code": "13109", "name": "品川区", "name_kana": "しながわく", "center_lat": 35.6090, "center_lng": 139.7302, "area_km2": 22.84, "population": 420000},
-    {"code": "13110", "name": "目黒区", "name_kana": "めぐろく", "center_lat": 35.6414, "center_lng": 139.6982, "area_km2": 14.67, "population": 285000},
-    {"code": "13111", "name": "大田区", "name_kana": "おおたく", "center_lat": 35.5614, "center_lng": 139.7161, "area_km2": 60.66, "population": 740000},
-    {"code": "13112", "name": "世田谷区", "name_kana": "せたがやく", "center_lat": 35.6464, "center_lng": 139.6530, "area_km2": 58.05, "population": 940000},
-    {"code": "13113", "name": "渋谷区", "name_kana": "しぶやく", "center_lat": 35.6639, "center_lng": 139.6982, "area_km2": 15.11, "population": 240000},
-    {"code": "13114", "name": "中野区", "name_kana": "なかのく", "center_lat": 35.7074, "center_lng": 139.6637, "area_km2": 15.59, "population": 340000},
-    {"code": "13115", "name": "杉並区", "name_kana": "すぎなみく", "center_lat": 35.6994, "center_lng": 139.6364, "area_km2": 34.06, "population": 590000},
-    {"code": "13116", "name": "豊島区", "name_kana": "としまく", "center_lat": 35.7260, "center_lng": 139.7166, "area_km2": 13.01, "population": 300000},
-    {"code": "13117", "name": "北区", "name_kana": "きたく", "center_lat": 35.7528, "center_lng": 139.7337, "area_km2": 20.61, "population": 355000},
-    {"code": "13118", "name": "荒川区", "name_kana": "あらかわく", "center_lat": 35.7362, "center_lng": 139.7830, "area_km2": 10.16, "population": 220000},
-    {"code": "13119", "name": "板橋区", "name_kana": "いたばしく", "center_lat": 35.7512, "center_lng": 139.7095, "area_km2": 32.22, "population": 585000},
-    {"code": "13120", "name": "練馬区", "name_kana": "ねりまく", "center_lat": 35.7357, "center_lng": 139.6516, "area_km2": 48.08, "population": 750000},
-    {"code": "13121", "name": "足立区", "name_kana": "あだちく", "center_lat": 35.7751, "center_lng": 139.8046, "area_km2": 53.25, "population": 695000},
-    {"code": "13122", "name": "葛飾区", "name_kana": "かつしかく", "center_lat": 35.7435, "center_lng": 139.8473, "area_km2": 34.80, "population": 465000},
-    {"code": "13123", "name": "江戸川区", "name_kana": "えどがわく", "center_lat": 35.7068, "center_lng": 139.8687, "area_km2": 49.90, "population": 700000},
+    {"code": "13101", "name": "千代田区", "name_kana": "ちよだく", "center_lat": 35.6940, "center_lng": 139.7534, "area_km2": 11.66, "population": 68856},
+    {"code": "13102", "name": "中央区", "name_kana": "ちゅうおうく", "center_lat": 35.6706, "center_lng": 139.7720, "area_km2": 10.21, "population": 181845},
+    {"code": "13103", "name": "港区", "name_kana": "みなとく", "center_lat": 35.6581, "center_lng": 139.7515, "area_km2": 20.36, "population": 267250},
+    {"code": "13104", "name": "新宿区", "name_kana": "しんじゅくく", "center_lat": 35.6938, "center_lng": 139.7036, "area_km2": 18.22, "population": 349318},
+    {"code": "13105", "name": "文京区", "name_kana": "ぶんきょうく", "center_lat": 35.7081, "center_lng": 139.7524, "area_km2": 11.29, "population": 232790},
+    {"code": "13106", "name": "台東区", "name_kana": "たいとうく", "center_lat": 35.7121, "center_lng": 139.7799, "area_km2": 10.11, "population": 213486},
+    {"code": "13107", "name": "墨田区", "name_kana": "すみだく", "center_lat": 35.7107, "center_lng": 139.8013, "area_km2": 13.77, "population": 285784},
+    {"code": "13108", "name": "江東区", "name_kana": "こうとうく", "center_lat": 35.6731, "center_lng": 139.8171, "area_km2": 42.99, "population": 539439},
+    {"code": "13109", "name": "品川区", "name_kana": "しながわく", "center_lat": 35.6090, "center_lng": 139.7302, "area_km2": 22.85, "population": 410260},
+    {"code": "13110", "name": "目黒区", "name_kana": "めぐろく", "center_lat": 35.6414, "center_lng": 139.6982, "area_km2": 14.67, "population": 280126},
+    {"code": "13111", "name": "大田区", "name_kana": "おおたく", "center_lat": 35.5614, "center_lng": 139.7161, "area_km2": 61.86, "population": 736652},
+    {"code": "13112", "name": "世田谷区", "name_kana": "せたがやく", "center_lat": 35.6464, "center_lng": 139.6530, "area_km2": 58.05, "population": 920596},
+    {"code": "13113", "name": "渋谷区", "name_kana": "しぶやく", "center_lat": 35.6639, "center_lng": 139.6982, "area_km2": 15.11, "population": 231499},
+    {"code": "13114", "name": "中野区", "name_kana": "なかのく", "center_lat": 35.7074, "center_lng": 139.6637, "area_km2": 15.59, "population": 338800},
+    {"code": "13115", "name": "杉並区", "name_kana": "すぎなみく", "center_lat": 35.6994, "center_lng": 139.6364, "area_km2": 34.06, "population": 574841},
+    {"code": "13116", "name": "豊島区", "name_kana": "としまく", "center_lat": 35.7260, "center_lng": 139.7166, "area_km2": 13.01, "population": 292339},
+    {"code": "13117", "name": "北区", "name_kana": "きたく", "center_lat": 35.7528, "center_lng": 139.7337, "area_km2": 20.61, "population": 358516},
+    {"code": "13118", "name": "荒川区", "name_kana": "あらかわく", "center_lat": 35.7362, "center_lng": 139.7830, "area_km2": 10.16, "population": 219813},
+    {"code": "13119", "name": "板橋区", "name_kana": "いたばしく", "center_lat": 35.7512, "center_lng": 139.7095, "area_km2": 32.22, "population": 574768},
+    {"code": "13120", "name": "練馬区", "name_kana": "ねりまく", "center_lat": 35.7357, "center_lng": 139.6516, "area_km2": 48.08, "population": 743428},
+    {"code": "13121", "name": "足立区", "name_kana": "あだちく", "center_lat": 35.7751, "center_lng": 139.8046, "area_km2": 53.25, "population": 694725},
+    {"code": "13122", "name": "葛飾区", "name_kana": "かつしかく", "center_lat": 35.7435, "center_lng": 139.8473, "area_km2": 34.80, "population": 467922},
+    {"code": "13123", "name": "江戸川区", "name_kana": "えどがわく", "center_lat": 35.7068, "center_lng": 139.8687, "area_km2": 49.90, "population": 690476},
 ]
 
 # サンプルデータ（実際のデータが取得できない場合の仮データ）
@@ -88,29 +90,29 @@ SAMPLE_DATA = {
         "13123": {"total_parks": 65, "total_area_sqm": 580000, "children_parks": 28, "with_playground": 35},
     },
     "schools": {
-        "13101": {"elementary_schools": 8, "junior_high_schools": 4, "high_schools": 3, "libraries": 5},
-        "13102": {"elementary_schools": 16, "junior_high_schools": 7, "high_schools": 5, "libraries": 8},
-        "13103": {"elementary_schools": 18, "junior_high_schools": 8, "high_schools": 7, "libraries": 10},
-        "13104": {"elementary_schools": 29, "junior_high_schools": 11, "high_schools": 10, "libraries": 12},
-        "13105": {"elementary_schools": 20, "junior_high_schools": 8, "high_schools": 6, "libraries": 11},
-        "13106": {"elementary_schools": 19, "junior_high_schools": 7, "high_schools": 5, "libraries": 8},
-        "13107": {"elementary_schools": 25, "junior_high_schools": 10, "high_schools": 6, "libraries": 9},
-        "13108": {"elementary_schools": 45, "junior_high_schools": 23, "high_schools": 12, "libraries": 15},
-        "13109": {"elementary_schools": 37, "junior_high_schools": 15, "high_schools": 9, "libraries": 12},
-        "13110": {"elementary_schools": 22, "junior_high_schools": 9, "high_schools": 7, "libraries": 10},
-        "13111": {"elementary_schools": 59, "junior_high_schools": 28, "high_schools": 14, "libraries": 16},
-        "13112": {"elementary_schools": 61, "junior_high_schools": 29, "high_schools": 17, "libraries": 21},
-        "13113": {"elementary_schools": 18, "junior_high_schools": 8, "high_schools": 6, "libraries": 9},
-        "13114": {"elementary_schools": 25, "junior_high_schools": 11, "high_schools": 7, "libraries": 10},
-        "13115": {"elementary_schools": 41, "junior_high_schools": 23, "high_schools": 12, "libraries": 14},
-        "13116": {"elementary_schools": 22, "junior_high_schools": 8, "high_schools": 8, "libraries": 9},
-        "13117": {"elementary_schools": 35, "junior_high_schools": 12, "high_schools": 8, "libraries": 11},
-        "13118": {"elementary_schools": 24, "junior_high_schools": 10, "high_schools": 5, "libraries": 7},
-        "13119": {"elementary_schools": 51, "junior_high_schools": 23, "high_schools": 11, "libraries": 13},
-        "13120": {"elementary_schools": 65, "junior_high_schools": 33, "high_schools": 15, "libraries": 17},
-        "13121": {"elementary_schools": 69, "junior_high_schools": 36, "high_schools": 12, "libraries": 15},
-        "13122": {"elementary_schools": 49, "junior_high_schools": 24, "high_schools": 10, "libraries": 12},
-        "13123": {"elementary_schools": 70, "junior_high_schools": 33, "high_schools": 13, "libraries": 14},
+        "13101": {"elementary_schools": 8, "junior_high_schools": 2, "high_schools": 2, "libraries": 5},
+        "13102": {"elementary_schools": 16, "junior_high_schools": 4, "high_schools": 2, "libraries": 3},
+        "13103": {"elementary_schools": 18, "junior_high_schools": 6, "high_schools": 7, "libraries": 10},
+        "13104": {"elementary_schools": 29, "junior_high_schools": 10, "high_schools": 8, "libraries": 12},
+        "13105": {"elementary_schools": 20, "junior_high_schools": 8, "high_schools": 15, "libraries": 11},  # 文京区は大学も多い
+        "13106": {"elementary_schools": 19, "junior_high_schools": 7, "high_schools": 6, "libraries": 5},
+        "13107": {"elementary_schools": 25, "junior_high_schools": 10, "high_schools": 6, "libraries": 7},
+        "13108": {"elementary_schools": 45, "junior_high_schools": 23, "high_schools": 8, "libraries": 11},
+        "13109": {"elementary_schools": 37, "junior_high_schools": 15, "high_schools": 9, "libraries": 10},
+        "13110": {"elementary_schools": 22, "junior_high_schools": 9, "high_schools": 7, "libraries": 8},
+        "13111": {"elementary_schools": 59, "junior_high_schools": 28, "high_schools": 8, "libraries": 16},
+        "13112": {"elementary_schools": 61, "junior_high_schools": 29, "high_schools": 9, "libraries": 21},
+        "13113": {"elementary_schools": 18, "junior_high_schools": 8, "high_schools": 7, "libraries": 10},
+        "13114": {"elementary_schools": 25, "junior_high_schools": 11, "high_schools": 5, "libraries": 8},
+        "13115": {"elementary_schools": 41, "junior_high_schools": 23, "high_schools": 7, "libraries": 13},
+        "13116": {"elementary_schools": 22, "junior_high_schools": 8, "high_schools": 8, "libraries": 7},
+        "13117": {"elementary_schools": 35, "junior_high_schools": 12, "high_schools": 9, "libraries": 15},
+        "13118": {"elementary_schools": 24, "junior_high_schools": 10, "high_schools": 5, "libraries": 5},
+        "13119": {"elementary_schools": 51, "junior_high_schools": 23, "high_schools": 9, "libraries": 11},
+        "13120": {"elementary_schools": 65, "junior_high_schools": 33, "high_schools": 8, "libraries": 12},
+        "13121": {"elementary_schools": 69, "junior_high_schools": 36, "high_schools": 7, "libraries": 13},
+        "13122": {"elementary_schools": 49, "junior_high_schools": 24, "high_schools": 7, "libraries": 7},
+        "13123": {"elementary_schools": 70, "junior_high_schools": 33, "high_schools": 11, "libraries": 12},
     },
     "safety": {
         "13101": {"total_crimes": 1200, "crime_rate_per_1000": 17.9, "police_boxes": 15, "security_cameras": 450},
@@ -163,37 +165,37 @@ SAMPLE_DATA = {
         "13123": {"nursery_schools": 68, "kindergartens": 30, "waiting_children": 10, "child_support_centers": 13},
     },
     "medical": {
-        "13101": {"hospitals": 12, "clinics": 85, "pediatric_clinics": 8, "doctors_per_1000": 3.5},
-        "13102": {"hospitals": 15, "clinics": 120, "pediatric_clinics": 12, "doctors_per_1000": 3.2},
-        "13103": {"hospitals": 20, "clinics": 180, "pediatric_clinics": 18, "doctors_per_1000": 3.8},
-        "13104": {"hospitals": 25, "clinics": 220, "pediatric_clinics": 22, "doctors_per_1000": 3.5},
-        "13105": {"hospitals": 18, "clinics": 150, "pediatric_clinics": 15, "doctors_per_1000": 4.2},
-        "13106": {"hospitals": 14, "clinics": 110, "pediatric_clinics": 10, "doctors_per_1000": 2.8},
-        "13107": {"hospitals": 16, "clinics": 125, "pediatric_clinics": 12, "doctors_per_1000": 2.5},
-        "13108": {"hospitals": 28, "clinics": 210, "pediatric_clinics": 20, "doctors_per_1000": 2.6},
-        "13109": {"hospitals": 22, "clinics": 180, "pediatric_clinics": 18, "doctors_per_1000": 2.8},
-        "13110": {"hospitals": 18, "clinics": 160, "pediatric_clinics": 16, "doctors_per_1000": 3.2},
-        "13111": {"hospitals": 35, "clinics": 280, "pediatric_clinics": 28, "doctors_per_1000": 2.4},
-        "13112": {"hospitals": 38, "clinics": 320, "pediatric_clinics": 32, "doctors_per_1000": 2.7},
-        "13113": {"hospitals": 16, "clinics": 140, "pediatric_clinics": 14, "doctors_per_1000": 3.5},
-        "13114": {"hospitals": 18, "clinics": 150, "pediatric_clinics": 15, "doctors_per_1000": 2.6},
-        "13115": {"hospitals": 28, "clinics": 240, "pediatric_clinics": 24, "doctors_per_1000": 2.8},
-        "13116": {"hospitals": 15, "clinics": 130, "pediatric_clinics": 13, "doctors_per_1000": 2.5},
-        "13117": {"hospitals": 20, "clinics": 160, "pediatric_clinics": 16, "doctors_per_1000": 2.4},
-        "13118": {"hospitals": 12, "clinics": 95, "pediatric_clinics": 9, "doctors_per_1000": 2.3},
-        "13119": {"hospitals": 30, "clinics": 250, "pediatric_clinics": 25, "doctors_per_1000": 2.5},
-        "13120": {"hospitals": 36, "clinics": 300, "pediatric_clinics": 30, "doctors_per_1000": 2.6},
-        "13121": {"hospitals": 32, "clinics": 260, "pediatric_clinics": 26, "doctors_per_1000": 2.2},
-        "13122": {"hospitals": 25, "clinics": 200, "pediatric_clinics": 20, "doctors_per_1000": 2.3},
-        "13123": {"hospitals": 30, "clinics": 240, "pediatric_clinics": 24, "doctors_per_1000": 2.4},
+        "13101": {"hospitals": 12, "clinics": 280, "pediatric_clinics": 15, "doctors_per_1000": 8.5},  # 千代田区は医療機関が集中
+        "13102": {"hospitals": 8, "clinics": 350, "pediatric_clinics": 25, "doctors_per_1000": 4.8},
+        "13103": {"hospitals": 15, "clinics": 450, "pediatric_clinics": 35, "doctors_per_1000": 5.2},
+        "13104": {"hospitals": 18, "clinics": 380, "pediatric_clinics": 28, "doctors_per_1000": 4.0},
+        "13105": {"hospitals": 22, "clinics": 320, "pediatric_clinics": 18, "doctors_per_1000": 6.5},  # 文京区は大学病院が多い
+        "13106": {"hospitals": 10, "clinics": 180, "pediatric_clinics": 12, "doctors_per_1000": 3.2},
+        "13107": {"hospitals": 8, "clinics": 160, "pediatric_clinics": 15, "doctors_per_1000": 2.8},
+        "13108": {"hospitals": 12, "clinics": 280, "pediatric_clinics": 25, "doctors_per_1000": 2.6},
+        "13109": {"hospitals": 15, "clinics": 250, "pediatric_clinics": 20, "doctors_per_1000": 3.0},
+        "13110": {"hospitals": 11, "clinics": 220, "pediatric_clinics": 18, "doctors_per_1000": 3.5},
+        "13111": {"hospitals": 25, "clinics": 380, "pediatric_clinics": 35, "doctors_per_1000": 2.8},
+        "13112": {"hospitals": 28, "clinics": 450, "pediatric_clinics": 42, "doctors_per_1000": 3.2},
+        "13113": {"hospitals": 12, "clinics": 280, "pediatric_clinics": 20, "doctors_per_1000": 4.5},
+        "13114": {"hospitals": 10, "clinics": 180, "pediatric_clinics": 18, "doctors_per_1000": 2.6},
+        "13115": {"hospitals": 15, "clinics": 320, "pediatric_clinics": 28, "doctors_per_1000": 2.8},
+        "13116": {"hospitals": 8, "clinics": 180, "pediatric_clinics": 15, "doctors_per_1000": 2.5},
+        "13117": {"hospitals": 12, "clinics": 200, "pediatric_clinics": 18, "doctors_per_1000": 2.4},
+        "13118": {"hospitals": 7, "clinics": 120, "pediatric_clinics": 10, "doctors_per_1000": 2.3},
+        "13119": {"hospitals": 18, "clinics": 300, "pediatric_clinics": 28, "doctors_per_1000": 2.5},
+        "13120": {"hospitals": 22, "clinics": 380, "pediatric_clinics": 35, "doctors_per_1000": 2.6},
+        "13121": {"hospitals": 20, "clinics": 320, "pediatric_clinics": 30, "doctors_per_1000": 2.2},
+        "13122": {"hospitals": 15, "clinics": 250, "pediatric_clinics": 22, "doctors_per_1000": 2.3},
+        "13123": {"hospitals": 18, "clinics": 300, "pediatric_clinics": 28, "doctors_per_1000": 2.4},
     },
     "culture": {
         "13101": {"libraries": 5, "museums": 8, "community_centers": 6, "sports_facilities": 4, "movie_theaters": 2, "theme_parks": 0, "shopping_malls": 3, "game_centers": 5},
         "13102": {"libraries": 8, "museums": 6, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 8},
         "13103": {"libraries": 10, "museums": 12, "community_centers": 15, "sports_facilities": 12, "movie_theaters": 5, "theme_parks": 0, "shopping_malls": 8, "game_centers": 10},
         "13104": {"libraries": 12, "museums": 10, "community_centers": 18, "sports_facilities": 15, "movie_theaters": 8, "theme_parks": 0, "shopping_malls": 10, "game_centers": 15},
-        "13105": {"libraries": 11, "museums": 9, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 4, "game_centers": 6},
-        "13106": {"libraries": 8, "museums": 15, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 12},
+        "13105": {"libraries": 11, "museums": 9, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 3, "theme_parks": 1, "shopping_malls": 4, "game_centers": 6},  # 文京区: 東京ドームシティ
+        "13106": {"libraries": 8, "museums": 15, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 12},  # 台東区: 浅草花やしき
         "13107": {"libraries": 9, "museums": 5, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 2, "theme_parks": 0, "shopping_malls": 3, "game_centers": 7},
         "13108": {"libraries": 15, "museums": 8, "community_centers": 20, "sports_facilities": 18, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 8, "game_centers": 10},
         "13109": {"libraries": 12, "museums": 6, "community_centers": 16, "sports_facilities": 14, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 9},
@@ -203,14 +205,14 @@ SAMPLE_DATA = {
         "13113": {"libraries": 9, "museums": 8, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 6, "theme_parks": 0, "shopping_malls": 7, "game_centers": 10},
         "13114": {"libraries": 10, "museums": 4, "community_centers": 14, "sports_facilities": 12, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 4, "game_centers": 8},
         "13115": {"libraries": 14, "museums": 6, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 6, "game_centers": 9},
-        "13116": {"libraries": 9, "museums": 5, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 7, "game_centers": 11},
+        "13116": {"libraries": 9, "museums": 5, "community_centers": 12, "sports_facilities": 10, "movie_theaters": 5, "theme_parks": 2, "shopping_malls": 7, "game_centers": 11},  # 豊島区: サンシャインシティ、ナンジャタウン
         "13117": {"libraries": 11, "museums": 4, "community_centers": 15, "sports_facilities": 13, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 7},
-        "13118": {"libraries": 7, "museums": 3, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 2, "theme_parks": 1, "shopping_malls": 3, "game_centers": 5},
+        "13118": {"libraries": 7, "museums": 3, "community_centers": 10, "sports_facilities": 8, "movie_theaters": 2, "theme_parks": 1, "shopping_malls": 3, "game_centers": 5},  # 荒川区: あらかわ遊園
         "13119": {"libraries": 13, "museums": 5, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 7, "game_centers": 9},
-        "13120": {"libraries": 17, "museums": 6, "community_centers": 22, "sports_facilities": 20, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 8, "game_centers": 10},
+        "13120": {"libraries": 17, "museums": 6, "community_centers": 22, "sports_facilities": 20, "movie_theaters": 5, "theme_parks": 1, "shopping_malls": 8, "game_centers": 10},  # 練馬区: ハリー・ポッター スタジオツアー
         "13121": {"libraries": 15, "museums": 4, "community_centers": 20, "sports_facilities": 18, "movie_theaters": 4, "theme_parks": 0, "shopping_malls": 7, "game_centers": 8},
         "13122": {"libraries": 12, "museums": 3, "community_centers": 16, "sports_facilities": 14, "movie_theaters": 3, "theme_parks": 0, "shopping_malls": 5, "game_centers": 7},
-        "13123": {"libraries": 14, "museums": 4, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 8},
+        "13123": {"libraries": 14, "museums": 4, "community_centers": 18, "sports_facilities": 16, "movie_theaters": 4, "theme_parks": 1, "shopping_malls": 6, "game_centers": 8},  # 江戸川区: 葛西臨海公園
     }
 }
 
@@ -323,73 +325,34 @@ async def init_sample_data(db: Session):
     db.query(WasteSeparation).delete()
     db.commit()
     
-    waste_data = {
-        "千代田区": {
-            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-            "collection_days": {
-                "可燃ごみ": "月・木",
-                "不燃ごみ": "第1・3水曜",
-                "資源": "火曜",
-                "粗大ごみ": "申込制"
-            },
-            "strictness_level": 2.5,
-            "special_rules": ["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"],
-            "features": "ビジネス街のため事業系ごみの分別も重要"
-        },
-        "中央区": {
-            "separation_types": ["燃やすごみ", "燃やさないごみ", "資源", "粗大ごみ"],
-            "collection_days": {
-                "燃やすごみ": "火・金",
-                "燃やさないごみ": "第2・4月曜",
-                "資源": "水曜",
-                "粗大ごみ": "申込制"
-            },
-            "strictness_level": 3.0,
-            "special_rules": ["資源は種類ごとに分別", "プラスチック製容器包装は別途回収"],
-            "features": "集合住宅が多く分別ルールが徹底されている"
-        },
-        "港区": {
-            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-            "collection_days": {
-                "可燃ごみ": "月・水・金",
-                "不燃ごみ": "第1・3火曜",
-                "資源": "木曜",
-                "粗大ごみ": "申込制"
-            },
-            "strictness_level": 3.5,
-            "special_rules": ["生ごみは水切りを徹底", "古紙は種類別に分別", "外国語表記あり"],
-            "features": "国際的な地域で多言語対応の分別ガイドあり"
-        }
+    # Import waste separation rules
+    from app.data.waste_separation_rules import WASTE_SEPARATION_RULES
+    
+    # 各区のゴミ分別データを追加
+    area_code_map = {
+        "千代田区": "13101", "中央区": "13102", "港区": "13103", "新宿区": "13104", 
+        "文京区": "13105", "台東区": "13106", "墨田区": "13107", "江東区": "13108",
+        "品川区": "13109", "目黒区": "13110", "大田区": "13111", "世田谷区": "13112",
+        "渋谷区": "13113", "中野区": "13114", "杉並区": "13115", "豊島区": "13116",
+        "北区": "13117", "荒川区": "13118", "板橋区": "13119", "練馬区": "13120",
+        "足立区": "13121", "葛飾区": "13122", "江戸川区": "13123"
     }
     
-    # 各区のゴミ分別データを追加（サンプルを参考に全区分作成）
     for area in db.query(Area).all():
-        if area.name in waste_data:
-            data = waste_data[area.name]
-        else:
-            # デフォルトデータ
-            data = {
-                "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-                "collection_days": {
-                    "可燃ごみ": "月・木",
-                    "不燃ごみ": "第2・4水曜",
-                    "資源": "金曜",
-                    "粗大ごみ": "申込制"
-                },
-                "strictness_level": 2.0,
-                "special_rules": ["指定袋の使用推奨", "資源は洗って出す"],
-                "features": "標準的な分別ルール"
-            }
-        
-        waste_separation = WasteSeparation(
-            area_id=area.id,
-            separation_types=data["separation_types"],
-            collection_days=data["collection_days"],
-            strictness_level=data["strictness_level"],
-            special_rules=data["special_rules"],
-            features=data["features"]
-        )
-        db.add(waste_separation)
+        area_code = area_code_map.get(area.name)
+        if area_code and area_code in WASTE_SEPARATION_RULES:
+            rule = WASTE_SEPARATION_RULES[area_code]
+            waste_separation = WasteSeparation(
+                area_id=area.id,
+                separation_types=rule["separation_types"],
+                collection_days=rule["collection_days"],
+                strictness_level=rule["strictness_level"],
+                special_rules=rule["special_rules"],
+                features=rule["features"],
+                item_details={},
+                data_source="東京都区公式サイト"
+            )
+            db.add(waste_separation)
     
     # 年齢層別人口データを追加
     print("Adding age distribution data...")

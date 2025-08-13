@@ -21,14 +21,14 @@ export const areaApi = {
   },
 
   // エリア詳細取得
-  getAreaDetail: async (areaId: string | number) => {
+  getAreaDetail: async (areaId: number) => {
     const response = await api.get<AreaDetail>(`/areas/${areaId}`);
     return response.data;
   },
 
   // エリア比較
-  compareAreas: async (areaIds: (string | number)[]) => {
-    const response = await api.post('/areas/compare/', { area_ids: areaIds });
+  compareAreas: async (areaIds: string[]) => {
+    const response = await api.post('/areas/compare', { area_ids: areaIds });
     return response.data;
   },
 };
@@ -37,7 +37,7 @@ export const areaApi = {
 export const wellbeingApi = {
   // スコア計算
   calculateScore: async (
-    areaId: string | number,
+    areaId: number,
     weights: WellbeingWeights,
     targetRent?: number,
     familySize = 4
@@ -114,7 +114,7 @@ export const searchApi = {
 export const simulationApi = {
   // 家計シミュレーション
   simulateHousehold: async (params: {
-    area_id: string | number;
+    area_id: string;  // MongoDBのObjectIdは文字列
     adults: number;
     children: number;
     annual_income: number;
@@ -129,8 +129,8 @@ export const simulationApi = {
 
   // 生活スタイルシミュレーション
   simulateLifestyle: async (params: {
-    current_area_id: string | number;
-    target_area_id: string | number;
+    current_area_id: string;  // MongoDBのObjectIdは文字列
+    target_area_id: string;    // MongoDBのObjectIdは文字列
     work_from_home_days?: number;
     children_ages?: number[];
     important_facilities?: string[];
@@ -140,7 +140,7 @@ export const simulationApi = {
   },
 
   // 通勤時間推定
-  estimateCommuteTime: async (fromAreaId: string | number, toStation: string) => {
+  estimateCommuteTime: async (fromAreaId: string, toStation: string) => {
     const response = await api.get('/simulation/commute-time/', {
       params: { from_area_id: fromAreaId, to_station: toStation },
     });
@@ -168,19 +168,25 @@ export const opendataApi = {
 // 混雑度関連API
 export const congestionApi = {
   // エリアの混雑度取得
-  getAreaCongestion: async (areaId: string | number) => {
+  getAreaCongestion: async (areaId: string) => {
     const response = await api.get(`/congestion/area/${areaId}/`);
     return response.data;
   },
 
+  // Google Places APIからリアルタイム混雑度データ取得
+  getLiveCongestion: async (areaCode: string) => {
+    const response = await api.get(`/congestion-google/area/${areaCode}/live`);
+    return response.data;
+  },
+
   // エリアの混雑度更新
-  updateAreaCongestion: async (areaId: string | number) => {
+  updateAreaCongestion: async (areaId: string) => {
     const response = await api.post(`/congestion/update/${areaId}/`);
     return response.data;
   },
 
   // 複数エリアの混雑度比較
-  compareCongestion: async (areaIds: (string | number)[]) => {
+  compareCongestion: async (areaIds: string[]) => {
     const response = await api.get('/congestion/compare', {
       params: { area_ids: areaIds.join(',') },
     });

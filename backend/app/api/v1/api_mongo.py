@@ -8,7 +8,8 @@ from app.api.v1.endpoints_mongo import (
     recommendations,
     age_distribution,
     waste_separation,
-    congestion
+    congestion,
+    congestion_google
 )
 
 api_router = APIRouter()
@@ -21,3 +22,4 @@ api_router.include_router(recommendations.router, prefix="/recommendations", tag
 api_router.include_router(age_distribution.router, prefix="/age-distribution", tags=["age-distribution"])
 api_router.include_router(waste_separation.router, prefix="/waste-separation", tags=["waste-separation"])
 api_router.include_router(congestion.router, prefix="/congestion", tags=["congestion"])
+api_router.include_router(congestion_google.router, prefix="/congestion-google", tags=["congestion-google"])

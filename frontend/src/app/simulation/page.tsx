@@ -13,8 +13,8 @@ function SimulationContent() {
   const { familyProfile, setFamilyProfile } = useStore();
   
   const [areas, setAreas] = useState<Area[]>([]);
-  const [selectedAreaId, setSelectedAreaId] = useState<number | null>(
-    areaIdParam ? parseInt(areaIdParam) : null
+  const [selectedAreaId, setSelectedAreaId] = useState<string | null>(
+    areaIdParam || null
   );
   const [simulationResult, setSimulationResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ function SimulationContent() {
     setLoading(true);
     try {
       const result = await simulationApi.simulateHousehold({
-        area_id: selectedAreaId,
+        area_id: selectedAreaId,  // 既に文字列型
         adults: formData.adults,
         children: formData.children,
         annual_income: formData.annualIncome,
@@ -103,7 +103,7 @@ function SimulationContent() {
               <select
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={selectedAreaId || ''}
-                onChange={(e) => setSelectedAreaId(Number(e.target.value))}
+                onChange={(e) => setSelectedAreaId(e.target.value || null)}
               >
                 <option value="">選択してください</option>
                 {areas.map(area => (

@@ -4,6 +4,8 @@ MongoDBデータベースの初期化とサンプルデータの投入
 """
 
 import asyncio
+import os
+import json
 from app.database.mongodb import connect_to_mongo, close_mongo_connection, db
 from app.models_mongo.area import Area, HousingData, SchoolData, ChildcareData, ParkData, MedicalData, SafetyData, CultureData
 from app.models_mongo.waste_separation import WasteSeparation
@@ -32,6 +34,11 @@ async def init_sample_data():
     await Area.delete_all()
     await WasteSeparation.delete_all()
     await CongestionData.delete_all()
+    
+    # tokyo_age_population_ckan_simple.jsonから年齢分布データを読み込む
+    json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'tokyo_age_population_ckan_simple.json')
+    with open(json_path, 'r', encoding='utf-8') as f:
+        age_population_data = json.load(f)
     
     # Sample area data for all 23 wards
     areas_data = [
@@ -109,28 +116,27 @@ async def init_sample_data():
         await area.insert()
     
     # Sample waste separation data
-    waste_data = [
-        {
-            "area_code": "13101",
-            "area_name": "千代田区",
-            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-            "collection_days": {
-                "可燃ごみ": "月・木",
-                "不燃ごみ": "第1・3水曜",
-                "資源": "火曜",
-                "粗大ごみ": "申込制"
-            },
-            "strictness_level": 2.5,
-            "special_rules": ["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"],
-            "features": "ビジネス街のため事業系ごみの分別も重要"
-        },
-        # ... Add all other waste data
-    ]
+    # Import waste separation rules
+    from app.data.waste_separation_rules import WASTE_SEPARATION_RULES
     
     # Insert waste separation data
-    for waste in waste_data:
-        waste_doc = WasteSeparation(**waste)
-        await waste_doc.insert()
+    waste_count = 0
+    for area in areas:
+        if area.code in WASTE_SEPARATION_RULES:
+            rule = WASTE_SEPARATION_RULES[area.code]
+            waste_doc = WasteSeparation(
+                area=area,
+                separation_types=rule["separation_types"],
+                collection_days=rule["collection_days"],
+                special_rules=rule["special_rules"],
+                disposal_locations=[f"{area.name}清掃事務所", f"{area.name}リサイクルセンター"],
+                recycling_rate=30.0 + (hash(area.name) % 20),
+                strictness_level=rule["strictness_level"],
+                penalty_info="不適切な分別は収集されません",
+                features=rule["features"]
+            )
+            await waste_doc.insert()
+            waste_count += 1
     
     # Sample congestion data
     congestion_data = [

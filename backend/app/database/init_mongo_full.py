@@ -3,6 +3,7 @@ MongoDB初期化スクリプト（全23区データ版）
 """
 import asyncio
 import os
+import json
 from datetime import datetime
 from app.database.mongodb import connect_to_mongo, close_mongo_connection, db
 from app.models_mongo.area import Area, HousingData, SchoolData, ChildcareData, MedicalData, ParkData, CultureData, SafetyData
@@ -29,6 +30,11 @@ async def init_all_areas():
     await Area.delete_all()
     await WasteSeparation.delete_all()
     await CongestionData.delete_all()
+    
+    # tokyo_age_population_ckan_simple.jsonから年齢分布データを読み込む
+    json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'tokyo_age_population_ckan_simple.json')
+    with open(json_path, 'r', encoding='utf-8') as f:
+        age_population_data = json.load(f)
     
     # 23区の基本データ
     areas_data = [
@@ -57,26 +63,46 @@ async def init_all_areas():
         {"code": "13123", "name": "江戸川区", "lat": 35.7067, "lng": 139.8686, "area": 49.90, "pop": 697801, "households": 340000, "density": 13984.2},
     ]
     
-    # 年齢層別人口データ（サンプル）
-    age_distributions = {
-        "13101": {"0-9": 5234, "10-19": 4823, "20-29": 12456, "30-39": 14532, "40-49": 13245, "50-59": 8943, "60-69": 4532, "70+": 3720},
-        "13102": {"0-9": 13543, "10-19": 12876, "20-29": 28965, "30-39": 35432, "40-49": 31234, "50-59": 23456, "60-69": 13456, "70+": 10217},
-        # 他の区も同様に追加
-    }
-    
     # 各区のデータを作成
     for area_data in areas_data:
-        # 年齢分布データ（デフォルト値を使用）
-        age_dist = age_distributions.get(area_data["code"], {
-            "0-9": int(area_data["pop"] * 0.08),
-            "10-19": int(area_data["pop"] * 0.07),
-            "20-29": int(area_data["pop"] * 0.17),
-            "30-39": int(area_data["pop"] * 0.18),
-            "40-49": int(area_data["pop"] * 0.16),
-            "50-59": int(area_data["pop"] * 0.12),
-            "60-69": int(area_data["pop"] * 0.10),
-            "70+": int(area_data["pop"] * 0.12)
-        })
+        # 年齢分布データをJSONから取得
+        if area_data["name"] in age_population_data:
+            json_age_data = age_population_data[area_data["name"]]
+            # すべての年齢分布データを含める
+            age_dist = {
+                "0-4": json_age_data.get("0-4", 0),
+                "5-9": json_age_data.get("5-9", 0),
+                "10-14": json_age_data.get("10-14", 0),
+                "15-19": json_age_data.get("15-19", 0),
+                "20-29": json_age_data.get("20-29", 0),
+                "30-39": json_age_data.get("30-39", 0),
+                "40-49": json_age_data.get("40-49", 0),
+                "50-59": json_age_data.get("50-59", 0),
+                "60-64": json_age_data.get("60-64", 0),
+                "65-74": json_age_data.get("65-74", 0),
+                "75+": json_age_data.get("75+", 0),
+                "0-14": json_age_data.get("0-14", 0),
+                "15-64": json_age_data.get("15-64", 0),
+                "65+": json_age_data.get("65+", 0)
+            }
+        else:
+            # フォールバック用のデフォルトデータ
+            age_dist = {
+                "0-4": int(area_data["pop"] * 0.05),
+                "5-9": int(area_data["pop"] * 0.05),
+                "10-14": int(area_data["pop"] * 0.05),
+                "15-19": int(area_data["pop"] * 0.05),
+                "20-29": int(area_data["pop"] * 0.15),
+                "30-39": int(area_data["pop"] * 0.15),
+                "40-49": int(area_data["pop"] * 0.15),
+                "50-59": int(area_data["pop"] * 0.10),
+                "60-64": int(area_data["pop"] * 0.05),
+                "65-74": int(area_data["pop"] * 0.10),
+                "75+": int(area_data["pop"] * 0.10),
+                "0-14": int(area_data["pop"] * 0.15),
+                "15-64": int(area_data["pop"] * 0.65),
+                "65+": int(area_data["pop"] * 0.20)
+            }
         
         area = Area(
             code=area_data["code"],
@@ -183,62 +209,27 @@ async def init_all_areas():
     print(f"Created {len(areas_data)} areas")
     
     # ゴミ分別データを追加
-    waste_data = {
-        "13101": {
-            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-            "collection_days": {
-                "可燃ごみ": "月・木",
-                "不燃ごみ": "第1・3水曜",
-                "資源": "火曜",
-                "粗大ごみ": "申込制"
-            },
-            "strictness_level": 2.5,
-            "special_rules": ["ペットボトルはキャップとラベルを外す", "新聞・雑誌は紐で縛る"],
-            "features": "ビジネス街のため事業系ごみの分別も重要"
-        },
-        "13102": {
-            "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-            "collection_days": {
-                "可燃ごみ": "火・金",
-                "不燃ごみ": "第2・4水曜",
-                "資源": "月曜",
-                "粗大ごみ": "申込制"
-            },
-            "strictness_level": 2.5,
-            "special_rules": ["ペットボトルはキャップとラベルを外す", "缶は潰さない"],
-            "features": "商業地域が多いため、事業系ごみの分別ルールに注意"
-        },
-        # 他の区も同様のパターンで追加
-    }
+    from app.data.waste_separation_rules import WASTE_SEPARATION_RULES
     
     # すべての区にゴミ分別データを作成
+    waste_count = 0
     for area_data in areas_data:
         code = area_data["code"]
-        if code in waste_data:
-            data = waste_data[code]
-        else:
-            # デフォルトデータ
-            data = {
-                "separation_types": ["可燃ごみ", "不燃ごみ", "資源", "粗大ごみ"],
-                "collection_days": {
-                    "可燃ごみ": "月・木",
-                    "不燃ごみ": "第1・3水曜",
-                    "資源": "火曜",
-                    "粗大ごみ": "申込制"
-                },
-                "strictness_level": 2.0,
-                "special_rules": ["ペットボトルはキャップとラベルを外す"],
-                "features": "標準的な分別ルール"
-            }
-        
-        waste_doc = WasteSeparation(
-            area_code=code,
-            area_name=area_data["name"],
-            **data
-        )
-        await waste_doc.insert()
+        if code in WASTE_SEPARATION_RULES:
+            rule = WASTE_SEPARATION_RULES[code]
+            waste_doc = WasteSeparation(
+                area_code=code,
+                area_name=area_data["name"],
+                separation_types=rule["separation_types"],
+                collection_days=rule["collection_days"],
+                strictness_level=rule["strictness_level"],
+                special_rules=rule["special_rules"],
+                features=rule["features"]
+            )
+            await waste_doc.insert()
+            waste_count += 1
     
-    print(f"Created waste separation data for {len(areas_data)} areas")
+    print(f"Created waste separation data for {waste_count} areas")
     
     # 混雑度データを追加
     for area_data in areas_data:
