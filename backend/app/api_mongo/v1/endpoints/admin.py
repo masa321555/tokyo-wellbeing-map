@@ -25,7 +25,9 @@ async def initialize_data(secret_key: str = None):
 async def initialize_data_now():
     """データベースを即座に初期化（緊急用）"""
     try:
-        await init_mongodb_data()
+        # init_mongo_simple.pyの関数を使用
+        from app.database.init_mongo_simple import init_all_areas
+        await init_all_areas()
         return {"status": "success", "message": "Database initialized successfully!"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
