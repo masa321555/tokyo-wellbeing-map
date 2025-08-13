@@ -12,7 +12,7 @@ import WasteSeparationDisplay from '@/components/WasteSeparationDisplay';
 
 export default function AreaDetailPage() {
   const params = useParams();
-  const areaId = parseInt(params.id as string);
+  const areaId = params.id as string;
   const { weights } = useStore();
   
   const [area, setArea] = useState<AreaDetail | null>(null);

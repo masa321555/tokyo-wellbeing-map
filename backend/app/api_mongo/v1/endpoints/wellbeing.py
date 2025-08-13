@@ -12,7 +12,7 @@ wellbeing_calculator = WellbeingCalculator()
 
 class WellbeingRequest(BaseModel):
     """ウェルビーイングスコア計算リクエスト"""
-    area_id: int = Field(..., description="評価対象エリアコード（例: 13101）")
+    area_id: str = Field(..., description="評価対象エリアID（MongoDB ObjectIDまたはエリアコード）")
     weights: Dict[str, float] = Field(
         default={
             "rent": 0.25,
@@ -71,12 +71,22 @@ async def calculate_wellbeing_score(request: WellbeingRequest):
     """
     指定エリアのウェルビーイングスコアを計算
     """
-    # area_idはコード（例: 13101）として受け取るので、文字列に変換して検索
-    area_code = str(request.area_id)
-    area = await Area.find_one(Area.code == area_code)
+    # MongoDB IDまたはエリアコードで検索
+    area = None
+    
+    # まずObjectIDとして検索を試みる
+    if len(request.area_id) == 24:
+        try:
+            area = await Area.get(request.area_id)
+        except:
+            pass
+    
+    # IDで見つからなかった場合はコードで検索
+    if not area:
+        area = await Area.find_one(Area.code == request.area_id)
     
     if not area:
-        raise HTTPException(status_code=404, detail=f"Area not found with code: {area_code}")
+        raise HTTPException(status_code=404, detail=f"Area not found: {request.area_id}")
     
     # 重みオブジェクトを作成
     weights = WellbeingWeights(**request.weights)
