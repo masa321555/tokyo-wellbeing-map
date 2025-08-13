@@ -35,6 +35,7 @@ export interface ParkData {
   children_parks?: number;
   with_playground?: number;
   with_sports?: number;
+  large_parks?: number;
 }
 
 export interface SchoolData {
@@ -56,6 +57,8 @@ export interface SafetyData {
   police_boxes?: number;
   street_lights?: number;
   traffic_accidents?: number;
+  police_stations?: number;
+  fire_stations?: number;
 }
 
 export interface MedicalData {
