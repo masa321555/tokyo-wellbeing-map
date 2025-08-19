@@ -2,13 +2,8 @@
 MongoDB connection and initialization
 """
 from motor.motor_asyncio import AsyncIOMotorClient
-from beanie import init_beanie
 from typing import Optional
 import os
-
-from app.models_mongo.area import Area
-from app.models_mongo.waste_separation import WasteSeparation
-from app.models_mongo.congestion import CongestionData
 
 class MongoDB:
     client: Optional[AsyncIOMotorClient] = None
@@ -25,22 +20,19 @@ async def connect_to_mongo():
     # MongoDB URLを環境変数から取得（デフォルトはローカル）
     MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
     
-    # SSL証明書の検証問題を回避（開発環境用）
+    # 接続プールの最適化設定
     db.client = AsyncIOMotorClient(
         MONGODB_URL,
-        tlsAllowInvalidCertificates=True
+        tlsAllowInvalidCertificates=True,
+        maxPoolSize=10,  # 接続プールサイズを制限
+        minPoolSize=5,   # 最小接続数を設定
+        serverSelectionTimeoutMS=5000,  # サーバー選択タイムアウトを5秒に短縮
+        connectTimeoutMS=5000,  # 接続タイムアウトを5秒に短縮
+        socketTimeoutMS=5000    # ソケットタイムアウトを5秒に短縮
     )
     db.database = db.client.tokyo_wellbeing
     
-    # Beanieの初期化（ODM）
-    await init_beanie(
-        database=db.database,
-        document_models=[
-            Area,
-            WasteSeparation,
-            CongestionData,
-        ]
-    )
+    # Beanie初期化はmain_mongo.pyのlifespanで行うため、ここでは削除
     print("Connected to MongoDB successfully!")
 
 async def close_mongo_connection():

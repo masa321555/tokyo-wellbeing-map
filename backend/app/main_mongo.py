@@ -101,19 +101,39 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Lightweight health check endpoint"""
+    # 軽量化のため、データベースクエリは行わない
+    # Renderのヘルスチェックがタイムアウトしないように高速レスポンス
+    return {
+        "status": "healthy",
+        "service": "tokyo-wellbeing-map-api"
+    }
+
+@app.get("/health/detailed")
+async def detailed_health_check():
+    """Detailed health check with database connection status"""
     try:
-        # Check MongoDB connection
-        await Area.find_one()
-        return {
-            "status": "healthy",
-            "database": "connected"
-        }
+        # より詳細なチェックが必要な場合のみデータベースに接続
+        if db.client:
+            # pingコマンドのみ実行（軽量）
+            await db.client.admin.command('ping')
+            return {
+                "status": "healthy",
+                "database": "connected",
+                "service": "tokyo-wellbeing-map-api"
+            }
+        else:
+            return {
+                "status": "unhealthy",
+                "database": "not initialized",
+                "service": "tokyo-wellbeing-map-api"
+            }
     except Exception as e:
         return {
             "status": "unhealthy",
             "database": "disconnected",
-            "error": str(e)
+            "error": str(e),
+            "service": "tokyo-wellbeing-map-api"
         }
 
 if __name__ == "__main__":

@@ -1,0 +1,28 @@
+name: Keep API Warm
+
+on:
+  schedule:
+    # 日本時間の朝6時から夜11時まで、10分ごとに実行
+    - cron: '*/10 21-14 * * *'  # UTC時間で21:00-14:00 = JST 6:00-23:00
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  ping-api:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Ping Health Endpoint
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://tokyo-wellbeing-map-api-mongo.onrender.com/health)
+        echo "Health check response: $response"
+        if [ $response -eq 200 ]; then
+          echo "✅ API is healthy"
+        else
+          echo "❌ API returned status code: $response"
+          exit 1
+        fi
+    
+    - name: Ping Detailed Health Endpoint
+      run: |
+        curl -s https://tokyo-wellbeing-map-api-mongo.onrender.com/health/detailed | jq '.'
+      continue-on-error: true

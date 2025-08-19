@@ -5,7 +5,8 @@ services:
     plan: free
     region: oregon
     buildCommand: "./render_build_mongo.sh"
-    startCommand: "uvicorn app.main_mongo:app --host 0.0.0.0 --port $PORT"
+    startCommand: "gunicorn app.main_mongo:app -c gunicorn_config.py"
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
