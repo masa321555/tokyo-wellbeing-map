@@ -6,7 +6,7 @@ from beanie.odm.operators.find.comparison import GTE, LTE, In
 from beanie.odm.operators.find.logical import And, Or
 
 from app.models_mongo.area import Area
-from app.services.wellbeing_calculator import WellbeingCalculator
+from app.services.wellbeing_calculator_mongo import WellbeingCalculator
 
 router = APIRouter()
 wellbeing_calculator = WellbeingCalculator()

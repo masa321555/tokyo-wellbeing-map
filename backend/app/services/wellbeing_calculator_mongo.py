@@ -32,12 +32,25 @@ class WellbeingCalculator:
         # 各指標の最大値（正規化用）
         self.max_values = {
             'rent': 30.0,  # 家賃30万円を最大値
-            'crime_rate': 5.0,  # 犯罪率5.0を最大値
+            'crime_rate': 20.0,  # 犯罪率20.0を最大値（千代田区17.9が最高）
             'schools': 50,  # 学校数50を最大値
             'parks': 100,  # 公園数100を最大値
             'hospitals': 20,  # 病院数20を最大値
             'libraries': 10,  # 図書館数10を最大値
             'waiting_children': 300  # 待機児童300人を最大値
+        }
+        
+        # 繁華街・歓楽街のある区（治安スコアに追加ペナルティ）
+        self.entertainment_districts = {
+            '新宿区': 15.0,    # 歌舞伎町など
+            '渋谷区': 12.0,    # センター街など
+            '豊島区': 10.0,    # 池袋西口など
+            '台東区': 8.0,     # 上野・浅草の夜の街
+            '港区': 8.0,       # 六本木など
+            '千代田区': 5.0,   # 秋葉原など
+            '中央区': 3.0,     # 銀座の夜の街
+            '中野区': 0.5,     # 中野駅周辺の飲み屋街
+            '荒川区': 0.0      # 特に大きな繁華街なし
         }
     
     def calculate_score(self, area: Any, weights: WellbeingWeights, 
@@ -107,14 +120,33 @@ class WellbeingCalculator:
         if not hasattr(area, 'safety_data') or not area.safety_data:
             return 70.0
             
-        # crime_rateを取得
+        # crime_rate_per_1000を取得（フィールド名を修正）
         if isinstance(area.safety_data, dict):
-            crime_rate = area.safety_data.get('crime_rate', 1.0)
+            crime_rate = area.safety_data.get('crime_rate_per_1000', 1.0)
+            police_stations = area.safety_data.get('police_stations', 0)
+            disaster_risk = area.safety_data.get('disaster_risk_score', 2.0)
         else:
-            crime_rate = getattr(area.safety_data, 'crime_rate', 1.0)
+            crime_rate = getattr(area.safety_data, 'crime_rate_per_1000', 1.0)
+            police_stations = getattr(area.safety_data, 'police_stations', 0)
+            disaster_risk = getattr(area.safety_data, 'disaster_risk_score', 2.0)
         
-        score = max(0, 100 * (1 - crime_rate / self.max_values['crime_rate']))
-        return round(score, 2)
+        # 基本スコア計算（犯罪率が低いほど高スコア）
+        crime_score = max(0, 100 * (1 - crime_rate / self.max_values['crime_rate']))
+        
+        # 警察署数によるボーナス（最大5点）
+        police_bonus = min(5, police_stations / 10)
+        
+        # 災害リスクによるペナルティ（最大10点）
+        disaster_penalty = (disaster_risk - 1) * 3.33  # リスク1-3を0-6.66点のペナルティに変換
+        
+        # 繁華街・歓楽街のペナルティを適用
+        area_name = getattr(area, 'name', '')
+        entertainment_penalty = self.entertainment_districts.get(area_name, 0)
+        
+        # 最終スコア（各要素を合計）
+        final_score = max(0, crime_score + police_bonus - disaster_penalty - entertainment_penalty)
+        
+        return round(final_score, 2)
     
     def _calculate_education_score(self, area: Any) -> float:
         """教育スコアを計算"""
