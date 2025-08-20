@@ -30,11 +30,21 @@ export default function AreaDetailPage() {
   const loadAreaData = async () => {
     setLoading(true);
     try {
+      // デバッグ: API URLを確認
+      console.log('Current API URL:', process.env.NEXT_PUBLIC_API_URL);
+      
       const [areaData, scoreData, congestionInfo] = await Promise.all([
         areaApi.getAreaDetail(areaId),
         wellbeingApi.calculateScore(areaId, weights),
         congestionApi.getAreaCongestion(areaId).catch(() => null),
       ]);
+      
+      // デバッグ: 受信したデータを確認
+      console.log('Area data received:', areaData);
+      if (areaData?.characteristics) {
+        console.log('Characteristics found:', areaData.characteristics);
+      }
+      
       setArea(areaData);
       setWellbeingScore(scoreData);
       setCongestionData(congestionInfo);
