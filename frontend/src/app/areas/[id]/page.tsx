@@ -372,6 +372,78 @@ export default function AreaDetailPage() {
         </div>
       )}
 
+      {/* 子育て支援制度 */}
+      {area.childcare_supports && area.childcare_supports.length > 0 && (
+        <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">👶 {area.name}の子育て支援制度</h2>
+          <div className="space-y-4">
+            {area.childcare_supports.slice(0, 5).map((support, index) => (
+              <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                  {support.name}
+                  {support.short_name && (
+                    <span className="text-sm text-gray-600 ml-2">（{support.short_name}）</span>
+                  )}
+                </h3>
+                
+                {support.monetary_support && (
+                  <div className="mt-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      💰 金銭的支援
+                    </span>
+                    <p className="mt-1 text-sm text-gray-700">{support.monetary_support.slice(0, 200)}...</p>
+                  </div>
+                )}
+                
+                {support.material_support && (
+                  <div className="mt-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      🎁 物品支援
+                    </span>
+                    <p className="mt-1 text-sm text-gray-700">{support.material_support.slice(0, 200)}...</p>
+                  </div>
+                )}
+                
+                {support.target && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    <span className="font-medium">対象:</span> {support.target.slice(0, 100)}...
+                  </p>
+                )}
+                
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">
+                    更新日: {support.update_date || '不明'}
+                  </span>
+                  {support.local_url && (
+                    <a
+                      href={support.local_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      詳細を見る →
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {area.childcare_supports.length > 5 && (
+            <p className="mt-4 text-sm text-gray-600 text-center">
+              他{area.childcare_supports.length - 5}件の支援制度があります
+            </p>
+          )}
+          
+          <div className="mt-6 p-4 bg-blue-50 rounded-md">
+            <p className="text-sm text-blue-800">
+              ※ この情報は東京都オープンデータカタログの子育て支援制度レジストリから取得しています。
+              最新情報は各区の公式サイトをご確認ください。
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ゴミ分別情報 */}
       {area.waste_separation && (
         <div className="mt-8">

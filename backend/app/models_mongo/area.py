@@ -80,6 +80,17 @@ class AreaCharacteristics(BaseModel):
     livability: Optional[str] = None        # 暮らしやすさ
     summary: Optional[str] = None           # 総合的な特徴（オプション）
 
+class ChildcareSupport(BaseModel):
+    """子育て支援制度データ"""
+    name: str                                # 制度名
+    short_name: Optional[str] = None        # 略称
+    summary: Optional[str] = None           # 概要
+    monetary_support: Optional[str] = None  # 金銭的支援内容
+    material_support: Optional[str] = None  # 物品支援内容
+    target: Optional[str] = None            # 対象者
+    update_date: Optional[str] = None       # 更新日
+    local_url: Optional[str] = None         # 自治体の詳細ページURL
+
 class Area(Document):
     """エリア（区）マスターデータ - MongoDB版"""
     # 基本情報
@@ -115,6 +126,9 @@ class Area(Document):
     
     # 町名リスト
     town_list: Optional[List[str]] = None
+    
+    # 子育て支援制度リスト
+    childcare_supports: Optional[List[ChildcareSupport]] = None
     
     # タイムスタンプ
     created_at: datetime = Field(default_factory=datetime.utcnow)

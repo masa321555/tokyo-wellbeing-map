@@ -105,6 +105,17 @@ export interface AreaCharacteristics {
   summary?: string;
 }
 
+export interface ChildcareSupport {
+  name: string;
+  short_name?: string;
+  summary?: string;
+  monetary_support?: string;
+  material_support?: string;
+  target?: string;
+  update_date?: string;
+  local_url?: string;
+}
+
 export interface WasteSeparation {
   separation_types?: string[];
   collection_days?: Record<string, string>;
@@ -126,6 +137,7 @@ export interface AreaDetail extends Area {
   characteristics?: AreaCharacteristics;
   waste_separation?: WasteSeparation;
   town_list?: string[];
+  childcare_supports?: ChildcareSupport[];
   created_at: string;
   updated_at: string;
 }
