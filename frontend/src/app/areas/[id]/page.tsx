@@ -44,6 +44,9 @@ export default function AreaDetailPage() {
       if (areaData?.characteristics) {
         console.log('Characteristics found:', areaData.characteristics);
       }
+      if (areaData?.town_list) {
+        console.log('Town list found:', areaData.town_list);
+      }
       
       setArea(areaData);
       setWellbeingScore(scoreData);
@@ -346,6 +349,26 @@ export default function AreaDetailPage() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* 町名一覧 */}
+      {area.town_list && area.town_list.length > 0 && (
+        <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">📍 {area.name}の町名一覧</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {area.town_list.map((town, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                {town}
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-gray-600 mt-4">
+            計 {area.town_list.length} 町
+          </p>
         </div>
       )}
 

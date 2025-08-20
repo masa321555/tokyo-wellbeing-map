@@ -125,6 +125,7 @@ export interface AreaDetail extends Area {
   childcare_data?: ChildcareData;
   characteristics?: AreaCharacteristics;
   waste_separation?: WasteSeparation;
+  town_list?: string[];
   created_at: string;
   updated_at: string;
 }

@@ -113,6 +113,9 @@ class Area(Document):
     # ウェルビーイングスコア
     wellbeing_score: Optional[float] = None
     
+    # 町名リスト
+    town_list: Optional[List[str]] = None
+    
     # タイムスタンプ
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
