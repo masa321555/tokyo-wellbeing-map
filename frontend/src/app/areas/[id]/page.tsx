@@ -312,6 +312,33 @@ export default function AreaDetailPage() {
         )}
       </div>
 
+      {/* エリアの特徴 */}
+      {area.characteristics && (
+        <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">🌟 {area.name}の特徴</h2>
+          <div className="space-y-4">
+            {area.characteristics.medical_childcare && (
+              <div>
+                <h3 className="text-lg font-medium mb-2 text-blue-600">🏥 医療・子育て環境</h3>
+                <p className="text-gray-700 leading-relaxed">{area.characteristics.medical_childcare}</p>
+              </div>
+            )}
+            {area.characteristics.education_culture && (
+              <div>
+                <h3 className="text-lg font-medium mb-2 text-green-600">🎓 教育・文化</h3>
+                <p className="text-gray-700 leading-relaxed">{area.characteristics.education_culture}</p>
+              </div>
+            )}
+            {area.characteristics.livability && (
+              <div>
+                <h3 className="text-lg font-medium mb-2 text-purple-600">🏘️ 暮らしやすさ</h3>
+                <p className="text-gray-700 leading-relaxed">{area.characteristics.livability}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ゴミ分別情報 */}
       {area.waste_separation && (
         <div className="mt-8">

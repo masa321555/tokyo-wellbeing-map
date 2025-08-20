@@ -73,6 +73,13 @@ class ChildcareData(BaseModel):
     acceptance_rate: Optional[float] = None
     data_source: Optional[str] = None
 
+class AreaCharacteristics(BaseModel):
+    """エリアの特徴・魅力データ"""
+    medical_childcare: Optional[str] = None  # 医療・子育て環境
+    education_culture: Optional[str] = None  # 教育・文化
+    livability: Optional[str] = None        # 暮らしやすさ
+    summary: Optional[str] = None           # 総合的な特徴（オプション）
+
 class Area(Document):
     """エリア（区）マスターデータ - MongoDB版"""
     # 基本情報
@@ -101,6 +108,7 @@ class Area(Document):
     medical_data: Optional[MedicalData] = None
     culture_data: Optional[CultureData] = None
     childcare_data: Optional[ChildcareData] = None
+    characteristics: Optional[AreaCharacteristics] = None  # エリアの特徴
     
     # ウェルビーイングスコア
     wellbeing_score: Optional[float] = None

@@ -98,6 +98,13 @@ export interface ChildcareData {
   medical_subsidy_age?: number;
 }
 
+export interface AreaCharacteristics {
+  medical_childcare?: string;
+  education_culture?: string;
+  livability?: string;
+  summary?: string;
+}
+
 export interface WasteSeparation {
   separation_types?: string[];
   collection_days?: Record<string, string>;
@@ -116,6 +123,7 @@ export interface AreaDetail extends Area {
   medical_data?: MedicalData;
   culture_data?: CultureData;
   childcare_data?: ChildcareData;
+  characteristics?: AreaCharacteristics;
   waste_separation?: WasteSeparation;
   created_at: string;
   updated_at: string;
