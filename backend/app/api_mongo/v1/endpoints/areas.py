@@ -42,7 +42,11 @@ async def get_area(area_id_or_code: str):
             raise HTTPException(status_code=404, detail=f"Area {area_id_or_code} not found")
         
         # エリアデータを辞書に変換
-        area_dict = area.model_dump(mode='json')
+        area_dict = area.model_dump(mode='json', exclude_none=False)
+        
+        # characteristicsフィールドが除外されている場合は手動で追加
+        if hasattr(area, 'characteristics') and area.characteristics:
+            area_dict['characteristics'] = area.characteristics.model_dump(mode='json')
         
         # ゴミ分別データを取得
         waste_separation = await WasteSeparation.find_one(WasteSeparation.area_code == area.code)
