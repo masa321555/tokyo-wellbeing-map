@@ -5,31 +5,5 @@
       "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
       "NODE_ENV": "production"
     }
-  },
-  "functions": {
-    "src/app/api/proxy/areas/[areaId]/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/proxy/areas/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/proxy/areas/compare/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/proxy/wellbeing/weights/presets/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/proxy/wellbeing/ranking/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/proxy/wellbeing/calculate/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/proxy/search/route.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "src/app/api/health/upstream/route.ts": {
-      "runtime": "nodejs20.x"
-    }
   }
 }
