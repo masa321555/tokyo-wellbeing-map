@@ -162,7 +162,7 @@ export default function AreaDetailPage() {
 
       {/* エリアの特徴 */}
       {area.characteristics && (
-        <div className="mt-8">
+        <div className="mt-8 mb-8">
           <Accordion 
             title={`${area.name}の特徴`}
             icon="🌟"
