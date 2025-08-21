@@ -75,10 +75,10 @@ export const AreaCard: React.FC<AreaCardProps> = ({
           </p>
         </div>
         <div className="text-right">
+          <p className="text-xs text-gray-500 mb-1">マッチングスコア</p>
           <div className={`text-2xl font-bold ${getScoreColor(area.wellbeing_score || area.total_score)}`}>
-            {(area.wellbeing_score || area.total_score)?.toFixed(1) || '-'}
+            {(area.wellbeing_score || area.total_score) ? `${(area.wellbeing_score || area.total_score).toFixed(1)}/100` : '-'}
           </div>
-          <p className="text-xs text-gray-500">スコア</p>
         </div>
       </div>
 

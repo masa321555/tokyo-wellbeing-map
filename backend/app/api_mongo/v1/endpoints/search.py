@@ -6,7 +6,7 @@ from beanie.odm.operators.find.comparison import GTE, LTE, In
 from beanie.odm.operators.find.logical import And, Or
 
 from app.models_mongo.area import Area
-from app.services.wellbeing_calculator_mongo import WellbeingCalculator
+from app.services.wellbeing_calculator_mongo import WellbeingCalculator, WellbeingWeights
 
 router = APIRouter()
 wellbeing_calculator = WellbeingCalculator()
@@ -154,8 +154,9 @@ async def search_areas(request: SearchRequest):
     # 結果を整形
     results = []
     for area in areas:
-        # ウェルビーイングスコアを計算
-        score_data = wellbeing_calculator.calculate_score(area)
+        # ウェルビーイングスコアを計算（デフォルトの重みを使用）
+        default_weights = WellbeingWeights()
+        score_data = wellbeing_calculator.calculate_score(area, default_weights)
         
         area_data = {
             "id": str(area.id),

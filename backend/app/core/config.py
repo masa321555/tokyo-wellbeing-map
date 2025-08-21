@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     # Google Places API設定
     GOOGLE_PLACES_API_KEY: str = ""
     
+    # Google Maps API設定（スクリプト用）
+    GOOGLE_MAPS_API_KEY: str = ""
+    
     # 環境設定
     ENVIRONMENT: str = "development"
     

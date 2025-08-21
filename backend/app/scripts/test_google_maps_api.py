@@ -10,9 +10,13 @@ import csv
 from pathlib import Path
 from typing import Dict, List, Optional
 import googlemaps
+from dotenv import load_dotenv
 
 # プロジェクトルートを追加
 sys.path.append(str(Path(__file__).parent.parent.parent))
+
+# .envファイルを読み込み
+load_dotenv()
 
 def test_api_with_samples():
     """APIキーのテストと少数サンプルでの動作確認"""

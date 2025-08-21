@@ -15,7 +15,7 @@ export default function Home() {
   const [areas, setAreas] = useState<Area[]>([]);
   const [loading, setLoading] = useState(true);
   const [ranking, setRanking] = useState<any[]>([]);
-  const [activeView, setActiveView] = useState<'search' | 'ranking'>('search');
+  const [activeView, setActiveView] = useState<'search' | 'ranking'>('ranking');
 
   // 初期データ取得
   useEffect(() => {
@@ -99,6 +99,16 @@ export default function Home() {
           <div className="bg-white rounded-lg shadow p-1">
             <div className="grid grid-cols-2 gap-1">
               <button
+                onClick={() => setActiveView('ranking')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  activeView === 'ranking'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                マッチング
+              </button>
+              <button
                 onClick={() => setActiveView('search')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   activeView === 'search'
@@ -107,16 +117,6 @@ export default function Home() {
                 }`}
               >
                 条件検索
-              </button>
-              <button
-                onClick={() => setActiveView('ranking')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeView === 'ranking'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                ランキング
               </button>
             </div>
           </div>
@@ -156,10 +156,28 @@ export default function Home() {
           {/* 結果表示ヘッダー */}
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-gray-900">
-              {activeView === 'search' ? '検索結果' : 'エリアランキング'}
+              {activeView === 'search' ? '検索結果' : 'エリアマッチング'}
               {areas.length > 0 && ` (${areas.length}件)`}
             </h2>
           </div>
+
+          {/* マッチング結果の説明 */}
+          {activeView === 'ranking' && ranking.length > 0 && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-800">
+                <span className="font-semibold">マッチング結果について：</span>
+                あなたが設定した重要度（
+                家賃・住居費: {Math.round(weights.rent * 100)}%、
+                治安・安全性: {Math.round(weights.safety * 100)}%、
+                教育環境: {Math.round(weights.education * 100)}%、
+                公園・緑地: {Math.round(weights.parks * 100)}%、
+                医療・福祉: {Math.round(weights.medical * 100)}%、
+                文化・施設: {Math.round(weights.culture * 100)}%
+                ）に基づいて、各エリアのスコアを算出しています。
+                スコアが高いほど、あなたの価値観に合った地域です。
+              </p>
+            </div>
+          )}
 
           {/* コンテンツ表示 */}
           {loading ? (
