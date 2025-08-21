@@ -48,6 +48,18 @@ async def get_area(area_id_or_code: str):
         if hasattr(area, 'characteristics') and area.characteristics:
             area_dict['characteristics'] = area.characteristics.model_dump(mode='json')
         
+        # town_list_with_stationsフィールドを追加
+        if hasattr(area, 'town_list_with_stations') and area.town_list_with_stations:
+            area_dict['town_list_with_stations'] = area.town_list_with_stations
+        
+        # station_coverageフィールドを追加
+        if hasattr(area, 'station_coverage') and area.station_coverage:
+            area_dict['station_coverage'] = area.station_coverage
+        
+        # childcare_supportsフィールドを追加
+        if hasattr(area, 'childcare_supports') and area.childcare_supports:
+            area_dict['childcare_supports'] = [support.model_dump(mode='json') for support in area.childcare_supports]
+        
         # ゴミ分別データを取得
         waste_separation = await WasteSeparation.find_one(WasteSeparation.area_code == area.code)
         if waste_separation:

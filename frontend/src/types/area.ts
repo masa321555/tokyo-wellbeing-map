@@ -137,6 +137,12 @@ export interface AreaDetail extends Area {
   characteristics?: AreaCharacteristics;
   waste_separation?: WasteSeparation;
   town_list?: string[];
+  town_list_with_stations?: string[];
+  station_coverage?: {
+    total_towns: number;
+    with_station: number;
+    coverage_rate: number;
+  };
   childcare_supports?: ChildcareSupport[];
   created_at: string;
   updated_at: string;

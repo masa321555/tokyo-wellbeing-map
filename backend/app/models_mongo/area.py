@@ -127,6 +127,12 @@ class Area(Document):
     # 町名リスト
     town_list: Optional[List[str]] = None
     
+    # 駅情報付き町名リスト
+    town_list_with_stations: Optional[List[str]] = None
+    
+    # 駅情報カバー率
+    station_coverage: Optional[Dict[str, Any]] = None
+    
     # 子育て支援制度リスト
     childcare_supports: Optional[List[ChildcareSupport]] = None
     

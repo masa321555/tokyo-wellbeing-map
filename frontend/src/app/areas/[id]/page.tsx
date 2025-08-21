@@ -9,6 +9,9 @@ import { useStore } from '@/store/useStore';
 import CongestionDisplay from '@/components/CongestionDisplay';
 import { AgeDistributionChart } from '@/components/charts/AgeDistributionChart';
 import WasteSeparationDisplay from '@/components/WasteSeparationDisplay';
+import WasteSeparationContent from '@/components/WasteSeparationContent';
+import { Accordion } from '@/components/ui/Accordion';
+import { TownListWithFilter } from '@/components/ui/TownListWithFilter';
 
 export default function AreaDetailPage() {
   const params = useParams();
@@ -327,56 +330,95 @@ export default function AreaDetailPage() {
 
       {/* エリアの特徴 */}
       {area.characteristics && (
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">🌟 {area.name}の特徴</h2>
-          <div className="space-y-4">
-            {area.characteristics.medical_childcare && (
-              <div>
-                <h3 className="text-lg font-medium mb-2 text-blue-600">🏥 医療・子育て環境</h3>
-                <p className="text-gray-700 leading-relaxed">{area.characteristics.medical_childcare}</p>
-              </div>
-            )}
-            {area.characteristics.education_culture && (
-              <div>
-                <h3 className="text-lg font-medium mb-2 text-green-600">🎓 教育・文化</h3>
-                <p className="text-gray-700 leading-relaxed">{area.characteristics.education_culture}</p>
-              </div>
-            )}
-            {area.characteristics.livability && (
-              <div>
-                <h3 className="text-lg font-medium mb-2 text-purple-600">🏘️ 暮らしやすさ</h3>
-                <p className="text-gray-700 leading-relaxed">{area.characteristics.livability}</p>
-              </div>
-            )}
-          </div>
+        <div className="mt-8">
+          <Accordion 
+            title={`${area.name}の特徴`}
+            icon="🌟"
+            defaultOpen={true}
+          >
+            <div className="space-y-4 pt-4">
+              {area.characteristics.medical_childcare && (
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-blue-600">🏥 医療・子育て環境</h3>
+                  <p className="text-gray-700 leading-relaxed">{area.characteristics.medical_childcare}</p>
+                </div>
+              )}
+              {area.characteristics.education_culture && (
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-green-600">🎓 教育・文化</h3>
+                  <p className="text-gray-700 leading-relaxed">{area.characteristics.education_culture}</p>
+                </div>
+              )}
+              {area.characteristics.livability && (
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-purple-600">🏘️ 暮らしやすさ</h3>
+                  <p className="text-gray-700 leading-relaxed">{area.characteristics.livability}</p>
+                </div>
+              )}
+            </div>
+          </Accordion>
         </div>
       )}
 
       {/* 町名一覧 */}
       {area.town_list && area.town_list.length > 0 && (
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">📍 {area.name}の町名一覧</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {area.town_list.map((town, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                {town}
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-gray-600 mt-4">
-            計 {area.town_list.length} 町
-          </p>
+        <div className="mt-8">
+          <Accordion 
+            title={`${area.name}の町名一覧`}
+            icon="📍"
+            defaultOpen={false}
+            badge={
+              area.station_coverage && (
+                <span className="text-sm font-normal text-gray-600">
+                  （{area.station_coverage.with_station}/{area.station_coverage.total_towns}町に駅情報あり・{area.station_coverage.coverage_rate}%）
+                </span>
+              )
+            }
+          >
+            <div className="pt-4">
+            {/* 駅情報付きの表示を優先 */}
+            {area.town_list_with_stations ? (
+              <TownListWithFilter 
+                townListWithStations={area.town_list_with_stations}
+                wardName={area.name}
+              />
+            ) : (
+              // 従来の町名のみの表示
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {area.town_list.map((town, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      {town}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-600 mt-4">
+                  計 {area.town_list.length} 町
+                </p>
+              </>
+            )}
+            </div>
+          </Accordion>
         </div>
       )}
 
       {/* 子育て支援制度 */}
       {area.childcare_supports && area.childcare_supports.length > 0 && (
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">👶 {area.name}の子育て支援制度</h2>
-          <div className="space-y-4">
+        <div className="mt-8">
+          <Accordion 
+            title={`${area.name}の子育て支援制度`}
+            icon="👶"
+            defaultOpen={false}
+            badge={
+              <span className="text-sm font-normal text-gray-600">
+                （{area.childcare_supports.length}件）
+              </span>
+            }
+          >
+            <div className="space-y-4 pt-4">
             {area.childcare_supports.slice(0, 5).map((support, index) => (
               <div key={index} className="border-b border-gray-200 pb-4 last:border-0">
                 <h3 className="text-lg font-medium text-gray-900 mb-1">
@@ -427,53 +469,80 @@ export default function AreaDetailPage() {
                 </div>
               </div>
             ))}
-          </div>
-          
-          {area.childcare_supports.length > 5 && (
-            <p className="mt-4 text-sm text-gray-600 text-center">
-              他{area.childcare_supports.length - 5}件の支援制度があります
-            </p>
-          )}
-          
-          <div className="mt-6 p-4 bg-blue-50 rounded-md">
-            <p className="text-sm text-blue-800">
-              ※ この情報は東京都オープンデータカタログの子育て支援制度レジストリから取得しています。
-              最新情報は各区の公式サイトをご確認ください。
-            </p>
-          </div>
+            </div>
+            
+            {area.childcare_supports.length > 5 && (
+              <p className="mt-4 text-sm text-gray-600 text-center">
+                他{area.childcare_supports.length - 5}件の支援制度があります
+              </p>
+            )}
+            
+            <div className="mt-6 p-4 bg-blue-50 rounded-md">
+              <p className="text-sm text-blue-800">
+                ※ この情報は東京都オープンデータカタログの子育て支援制度レジストリから取得しています。
+                最新情報は各区の公式サイトをご確認ください。
+              </p>
+            </div>
+          </Accordion>
         </div>
       )}
 
       {/* ゴミ分別情報 */}
       {area.waste_separation && (
         <div className="mt-8">
-          <WasteSeparationDisplay data={area.waste_separation} />
+          <Accordion 
+            title="ゴミ分別ルール"
+            icon="♻️"
+            defaultOpen={false}
+          >
+            <div className="pt-4">
+              <WasteSeparationContent data={area.waste_separation} />
+            </div>
+          </Accordion>
         </div>
       )}
 
       {/* 混雑度情報 */}
-      {liveCongestionData ? (
+      {(liveCongestionData || congestionData) && (
         <div className="mt-8">
-          <CongestionDisplay congestion={liveCongestionData} />
-          {liveCongestionData.data_source === 'google_places_api' && (
-            <p className="text-xs text-gray-500 mt-2 text-right">
-              データソース: Google Places API
-            </p>
-          )}
-        </div>
-      ) : congestionData && (
-        <div className="mt-8">
-          <CongestionDisplay congestion={congestionData.congestion} />
+          <Accordion 
+            title="混雑度情報"
+            icon="📊"
+            defaultOpen={false}
+          >
+            <div className="pt-4">
+              {liveCongestionData ? (
+                <>
+                  <CongestionDisplay congestion={liveCongestionData} />
+                  {liveCongestionData.data_source === 'google_places_api' && (
+                    <p className="text-xs text-gray-500 mt-2 text-right">
+                      データソース: Google Places API
+                    </p>
+                  )}
+                </>
+              ) : (
+                <CongestionDisplay congestion={congestionData.congestion} />
+              )}
+            </div>
+          </Accordion>
         </div>
       )}
 
       {/* 年齢層分布 */}
       {area?.age_distribution && (
         <div className="mt-8">
-          <AgeDistributionChart 
-            data={area.age_distribution} 
-            areaName={area.name}
-          />
+          <Accordion 
+            title="年齢層別人口分布"
+            icon="📈"
+            defaultOpen={false}
+          >
+            <div className="pt-4">
+              <AgeDistributionChart 
+                data={area.age_distribution} 
+                areaName={area.name}
+              />
+            </div>
+          </Accordion>
         </div>
       )}
 
