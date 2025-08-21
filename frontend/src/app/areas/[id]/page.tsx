@@ -53,12 +53,16 @@ export default function AreaDetailPage() {
       
       setArea(areaData);
       setWellbeingScore(scoreData);
+      
+      // デバッグ: 混雑度データの構造を確認
+      console.log('Congestion info received:', congestionInfo);
       setCongestionData(congestionInfo);
       
       // Google Places APIからリアルタイム混雑度データを取得
       if (areaData?.code) {
         try {
           const liveData = await congestionApi.getLiveCongestion(areaData.code);
+          console.log('Live congestion data received:', liveData);
           setLiveCongestionData(liveData);
         } catch (error) {
           console.error('Failed to load live congestion data:', error);
@@ -503,7 +507,7 @@ export default function AreaDetailPage() {
       )}
 
       {/* 混雑度情報 */}
-      {(liveCongestionData || congestionData) && (
+      {(liveCongestionData || congestionData?.congestion) && (
         <div className="mt-8">
           <Accordion 
             title="混雑度情報"
@@ -520,9 +524,9 @@ export default function AreaDetailPage() {
                     </p>
                   )}
                 </>
-              ) : (
+              ) : congestionData?.congestion ? (
                 <CongestionDisplay congestion={congestionData.congestion} />
-              )}
+              ) : null}
             </div>
           </Accordion>
         </div>

@@ -231,14 +231,34 @@ export const opendataApi = {
 export const congestionApi = {
   // エリアの混雑度取得
   getAreaCongestion: async (areaId: string) => {
-    const response = await api.get(`/congestion/area/${areaId}/`);
-    return response.data;
+    try {
+      if (IS_CLIENT) {
+        const response = await axios.get(`/api/proxy/areas/${areaId}/congestion`);
+        return response.data;
+      } else {
+        const response = await api.get(`/congestion/area/${areaId}/`);
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Error fetching congestion data:', error);
+      return null;
+    }
   },
 
   // Google Places APIからリアルタイム混雑度データ取得
   getLiveCongestion: async (areaCode: string) => {
-    const response = await api.get(`/congestion-google/area/${areaCode}/live`);
-    return response.data;
+    try {
+      if (IS_CLIENT) {
+        const response = await axios.get(`/api/proxy/areas/${areaCode}/live-congestion`);
+        return response.data;
+      } else {
+        const response = await api.get(`/congestion-google/area/${areaCode}/live`);
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Error fetching live congestion data:', error);
+      return null;
+    }
   },
 
   // エリアの混雑度更新

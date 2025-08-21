@@ -39,6 +39,15 @@ interface CongestionDisplayProps {
 }
 
 const CongestionDisplay: React.FC<CongestionDisplayProps> = ({ congestion }) => {
+  // データの存在チェック
+  if (!congestion || !congestion.overall) {
+    return (
+      <div className="bg-gray-100 rounded-lg p-6 text-center">
+        <p className="text-gray-500">混雑度情報は現在利用できません</p>
+      </div>
+    )
+  }
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return '#FF4444'
     if (score >= 60) return '#FF8800'
