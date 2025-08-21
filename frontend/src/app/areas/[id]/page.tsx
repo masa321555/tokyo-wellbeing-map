@@ -160,6 +160,38 @@ export default function AreaDetailPage() {
         </div>
       </div>
 
+      {/* エリアの特徴 */}
+      {area.characteristics && (
+        <div className="mt-8">
+          <Accordion 
+            title={`${area.name}の特徴`}
+            icon="🌟"
+            defaultOpen={true}
+          >
+            <div className="space-y-4 pt-4">
+              {area.characteristics.medical_childcare && (
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-blue-600">🏥 医療・子育て環境</h3>
+                  <p className="text-gray-700 leading-relaxed">{area.characteristics.medical_childcare}</p>
+                </div>
+              )}
+              {area.characteristics.education_culture && (
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-green-600">🎓 教育・文化</h3>
+                  <p className="text-gray-700 leading-relaxed">{area.characteristics.education_culture}</p>
+                </div>
+              )}
+              {area.characteristics.livability && (
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-purple-600">🏘️ 暮らしやすさ</h3>
+                  <p className="text-gray-700 leading-relaxed">{area.characteristics.livability}</p>
+                </div>
+              )}
+            </div>
+          </Accordion>
+        </div>
+      )}
+
       {/* 詳細データ */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* 住宅情報 */}
@@ -327,38 +359,6 @@ export default function AreaDetailPage() {
           </div>
         )}
       </div>
-
-      {/* エリアの特徴 */}
-      {area.characteristics && (
-        <div className="mt-8">
-          <Accordion 
-            title={`${area.name}の特徴`}
-            icon="🌟"
-            defaultOpen={true}
-          >
-            <div className="space-y-4 pt-4">
-              {area.characteristics.medical_childcare && (
-                <div>
-                  <h3 className="text-lg font-medium mb-2 text-blue-600">🏥 医療・子育て環境</h3>
-                  <p className="text-gray-700 leading-relaxed">{area.characteristics.medical_childcare}</p>
-                </div>
-              )}
-              {area.characteristics.education_culture && (
-                <div>
-                  <h3 className="text-lg font-medium mb-2 text-green-600">🎓 教育・文化</h3>
-                  <p className="text-gray-700 leading-relaxed">{area.characteristics.education_culture}</p>
-                </div>
-              )}
-              {area.characteristics.livability && (
-                <div>
-                  <h3 className="text-lg font-medium mb-2 text-purple-600">🏘️ 暮らしやすさ</h3>
-                  <p className="text-gray-700 leading-relaxed">{area.characteristics.livability}</p>
-                </div>
-              )}
-            </div>
-          </Accordion>
-        </div>
-      )}
 
       {/* 町名一覧 */}
       {area.town_list && area.town_list.length > 0 && (
