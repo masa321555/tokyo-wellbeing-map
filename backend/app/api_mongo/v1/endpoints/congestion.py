@@ -65,7 +65,7 @@ async def get_area_congestion(area_id_or_code: str):
             },
             'time_based': {
                 'weekday': morning_avg,
-                'weekend': sum(weekend_data.values()) / len(weekend_data) if weekend_data else 50,
+                'weekend': sum(weekend_data.values()) / len(weekend_data) if weekend_data and len(weekend_data) > 0 else 50,
                 'morning': morning_avg,
                 'daytime': daytime_avg,
                 'evening': evening_avg
@@ -94,6 +94,9 @@ async def get_area_congestion(area_id_or_code: str):
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        print(f"Error in get_area_congestion: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/update/{area_id_or_code}/")
