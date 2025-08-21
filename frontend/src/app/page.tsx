@@ -73,22 +73,13 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 py-6">
       {/* ヘッダーセクション */}
       <div className="mb-6">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              あなたの理想の居住地を見つけよう
-            </h1>
-            <p className="text-gray-600">
-              東京都内の各エリアを、あなたの価値観に基づいて評価・比較できます
-            </p>
-          </div>
-          <button
-            onClick={() => router.push('/recommendations')}
-            className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-medium rounded-md hover:from-yellow-500 hover:to-orange-600 transition-all shadow-md flex items-center gap-2"
-          >
-            <span>✨</span>
-            AIおすすめ
-          </button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            あなたの理想の居住地を見つけよう
+          </h1>
+          <p className="text-gray-600">
+            東京都内の各エリアを、あなたの価値観に基づいて評価・比較できます
+          </p>
         </div>
       </div>
 
@@ -175,6 +166,25 @@ export default function Home() {
                 文化・施設: {Math.round(weights.culture * 100)}%
                 ）に基づいて、各エリアのスコアを算出しています。
                 スコアが高いほど、あなたの価値観に合った地域です。
+              </p>
+            </div>
+          )}
+
+          {/* 条件検索結果の説明 */}
+          {activeView === 'search' && areas.length > 0 && Object.keys(searchParams).length > 0 && (
+            <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+              <p className="text-sm text-green-800">
+                <span className="font-semibold">検索結果について：</span>
+                {searchParams.minRent !== undefined || searchParams.maxRent !== undefined ? (
+                  <>家賃 {searchParams.minRent || 0}万円〜{searchParams.maxRent || '上限なし'}万円、</>
+                ) : null}
+                {searchParams.roomType && <>間取り {searchParams.roomType}、</>}
+                {searchParams.minElementarySchools && <>小学校 {searchParams.minElementarySchools}校以上、</>}
+                {searchParams.maxWaitingChildren !== undefined && <>待機児童 {searchParams.maxWaitingChildren}人以下、</>}
+                {searchParams.minParks && <>公園 {searchParams.minParks}箇所以上、</>}
+                {searchParams.maxCrimeRate && <>犯罪率 {searchParams.maxCrimeRate}以下、</>}
+                の条件に合致するエリアを表示しています。
+                各エリアのマッチングスコアは、全体的な住みやすさを総合的に評価した指標です。
               </p>
             </div>
           )}

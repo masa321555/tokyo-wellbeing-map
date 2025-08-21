@@ -33,9 +33,25 @@ async def get_area_congestion(area_id_or_code: str):
         # フロントエンドが期待する形式に変換
         congestion_dict = congestion.model_dump(mode='json')
         
-        # station_congestionとroad_congestionがある場合の処理
-        station_data = congestion_dict.get('station_congestion', {})
-        road_data = congestion_dict.get('road_congestion', {})
+        # facility_congestionデータを取得
+        facility_data = congestion_dict.get('facility_congestion', {})
+        train_station = facility_data.get('train_station', {})
+        shopping_mall = facility_data.get('shopping_mall', {})
+        park_data = facility_data.get('park', {})
+        residential = facility_data.get('residential', {})
+        
+        # weekday_congestionから時間帯別データを取得
+        weekday_data = congestion_dict.get('weekday_congestion', {})
+        weekend_data = congestion_dict.get('weekend_congestion', {})
+        
+        # 朝・昼・夜の平均を計算
+        morning_hours = [7, 8, 9]
+        daytime_hours = [10, 11, 12, 13, 14, 15, 16]
+        evening_hours = [17, 18, 19]
+        
+        morning_avg = sum(weekday_data.get(str(h), 0) for h in morning_hours) / len(morning_hours) if weekday_data else 70
+        daytime_avg = sum(weekday_data.get(str(h), 0) for h in daytime_hours) / len(daytime_hours) if weekday_data else 60
+        evening_avg = sum(weekday_data.get(str(h), 0) for h in evening_hours) / len(evening_hours) if weekday_data else 75
         
         transformed_congestion = {
             'overall': {
@@ -48,23 +64,28 @@ async def get_area_congestion(area_id_or_code: str):
                 }
             },
             'time_based': {
-                'weekday': station_data.get('morning', 70),
-                'weekend': station_data.get('weekend', 50),
-                'morning': station_data.get('morning', 70),
-                'daytime': 60,  # デフォルト値
-                'evening': station_data.get('evening', 75)
+                'weekday': morning_avg,
+                'weekend': sum(weekend_data.values()) / len(weekend_data) if weekend_data else 50,
+                'morning': morning_avg,
+                'daytime': daytime_avg,
+                'evening': evening_avg
             },
             'facility_based': {
-                'station': station_data.get('morning', 70),
-                'shopping': 65,  # デフォルト値
-                'park': 40,  # デフォルト値
-                'residential': road_data.get('morning', 60)
+                'station': train_station.get('peak', train_station.get('average', 70)),
+                'shopping': shopping_mall.get('peak', shopping_mall.get('average', 65)),
+                'park': park_data.get('average', 40),
+                'residential': residential.get('average', 60)
             },
             'family_metrics': {
                 'family_friendliness': 70,  # デフォルト値
                 'stroller_accessibility': 65,  # デフォルト値
                 'quiet_area_ratio': 0.4  # デフォルト値
-            }
+            },
+            # 追加：元のデータも含める
+            'congestion_score': congestion_dict.get('congestion_score', 60),
+            'facility_congestion': facility_data,
+            'peak_congestion': train_station.get('peak', 70),
+            'average_congestion': train_station.get('average', 60)
         }
         
         return {
