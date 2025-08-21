@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { Area, AreaDetail, WellbeingScore, WellbeingWeights } from '@/types/area';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://tokyo-wellbeing-map-api-mongo.onrender.com';
+// 本番環境では相対パスを使用してプロキシ経由でアクセス
+const IS_CLIENT = typeof window !== 'undefined';
+const API_URL = IS_CLIENT ? '' : (process.env.NEXT_PUBLIC_API_URL || 'https://tokyo-wellbeing-map-api-mongo.onrender.com');
 
 const api = axios.create({
-  baseURL: `${API_URL}/api/v1`,
+  baseURL: IS_CLIENT ? '' : `${API_URL}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,22 +16,45 @@ const api = axios.create({
 export const areaApi = {
   // 全エリア一覧取得
   getAreas: async (skip = 0, limit = 100) => {
-    const response = await api.get<Area[]>('/areas/', {
-      params: { skip, limit },
-    });
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.get<Area[]>('/api/proxy/areas', {
+        params: { skip, limit },
+      });
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.get<Area[]>('/areas/', {
+        params: { skip, limit },
+      });
+      return response.data;
+    }
   },
 
   // エリア詳細取得
   getAreaDetail: async (areaId: string) => {
-    const response = await api.get<AreaDetail>(`/areas/${areaId}`);
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.get<AreaDetail>(`/api/proxy/areas/${areaId}`);
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.get<AreaDetail>(`/areas/${areaId}`);
+      return response.data;
+    }
   },
 
   // エリア比較
   compareAreas: async (areaIds: string[]) => {
-    const response = await api.post('/areas/compare', { area_ids: areaIds });
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.post('/api/proxy/areas/compare', { area_ids: areaIds });
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.post('/areas/compare', { area_ids: areaIds });
+      return response.data;
+    }
   },
 };
 
@@ -42,23 +67,46 @@ export const wellbeingApi = {
     targetRent?: number,
     familySize = 4
   ) => {
-    const response = await api.post<WellbeingScore>('/wellbeing/calculate/', {
-      area_id: areaId,
-      weights,
-      target_rent: targetRent,
-      family_size: familySize,
-    });
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.post<WellbeingScore>('/api/proxy/wellbeing/calculate', {
+        area_id: areaId,
+        weights,
+        target_rent: targetRent,
+        family_size: familySize,
+      });
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.post<WellbeingScore>('/wellbeing/calculate/', {
+        area_id: areaId,
+        weights,
+        target_rent: targetRent,
+        family_size: familySize,
+      });
+      return response.data;
+    }
   },
 
   // ランキング取得
   getRanking: async (weights: WellbeingWeights, targetRent?: number, limit = 10) => {
-    const response = await api.post('/wellbeing/ranking/', {
-      weights,
-      target_rent: targetRent,
-      limit,
-    });
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.post('/api/proxy/wellbeing/ranking', {
+        weights,
+        target_rent: targetRent,
+        limit,
+      });
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.post('/wellbeing/ranking/', {
+        weights,
+        target_rent: targetRent,
+        limit,
+      });
+      return response.data;
+    }
   },
 
   // レコメンド取得
@@ -75,8 +123,15 @@ export const wellbeingApi = {
 
   // プリセット重み取得
   getWeightPresets: async () => {
-    const response = await api.get('/wellbeing/weights/presets/');
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.get('/api/proxy/wellbeing/weights/presets');
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.get('/wellbeing/weights/presets/');
+      return response.data;
+    }
   },
 };
 
@@ -97,8 +152,15 @@ export const searchApi = {
     skip?: number;
     limit?: number;
   }) => {
-    const response = await api.post('/search/', params);
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.post('/api/proxy/search', params);
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.post('/search/', params);
+      return response.data;
+    }
   },
 
   // 検索候補取得
