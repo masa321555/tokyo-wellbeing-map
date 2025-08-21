@@ -185,8 +185,15 @@ export const simulationApi = {
     car_ownership?: boolean;
     childcare_needed?: boolean;
   }) => {
-    const response = await api.post('/simulation/household/', params);
-    return response.data;
+    if (IS_CLIENT) {
+      // クライアントサイドではプロキシ経由
+      const response = await axios.post('/api/proxy/simulation/household', params);
+      return response.data;
+    } else {
+      // サーバーサイドでは直接API呼び出し
+      const response = await api.post('/simulation/household/', params);
+      return response.data;
+    }
   },
 
   // 生活スタイルシミュレーション

@@ -69,8 +69,10 @@ function SimulationContent() {
         children: formData.children,
         annualIncome: formData.annualIncome,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to run simulation:', error);
+      // エラーメッセージを表示
+      alert(`シミュレーションの実行に失敗しました: ${error.response?.data?.error || error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
