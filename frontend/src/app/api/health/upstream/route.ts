@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// ランタイム指定（Node.jsランタイムを使用）
+export const runtime = 'nodejs';
+
 const API_BASE_URL = process.env.API_BASE_URL || 'https://tokyo-wellbeing-map-api-mongo.onrender.com';
 const HEALTH_CHECK_TIMEOUT = 10000; // 10秒のタイムアウト
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<Response> {
   const results = {
     timestamp: new Date().toISOString(),
     upstreamUrl: API_BASE_URL,

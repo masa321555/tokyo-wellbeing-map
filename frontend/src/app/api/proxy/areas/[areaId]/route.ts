@@ -26,15 +26,18 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = MAX_R
   throw new Error('Max retries exceeded');
 }
 
+// ランタイム指定（Node.jsランタイムを使用）
+export const runtime = 'nodejs';
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { areaId: string } }
-) {
+  { params }: { params: Promise<{ areaId: string }> }
+): Promise<Response> {
   const requestId = crypto.randomUUID();
   const startTime = Date.now();
   
   try {
-    const { areaId } = params;
+    const { areaId } = await params;
     
     // タイムアウト付きfetch with retry
     const controller = new AbortController();
@@ -87,10 +90,11 @@ export async function GET(
   } catch (error: any) {
     const latency = Date.now() - startTime;
     
+    const errorParams = await params;
     // エラーログ
     console.error(JSON.stringify({
       requestId,
-      endpoint: `/api/proxy/areas/${params.areaId}`,
+      endpoint: `/api/proxy/areas/${errorParams.areaId}`,
       error: error.message,
       type: error.name === 'AbortError' ? 'timeout' : 'network',
       latency,

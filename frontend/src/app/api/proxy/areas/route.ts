@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PROXY_CONFIG, fetchWithRetry, logError, logAccess, getCacheHeaders } from '@/lib/proxy-config';
 
-export async function GET(request: NextRequest) {
+// ランタイム指定（Node.jsランタイムを使用）
+export const runtime = 'nodejs';
+
+export async function GET(request: NextRequest): Promise<Response> {
   const requestId = crypto.randomUUID();
   const startTime = Date.now();
   

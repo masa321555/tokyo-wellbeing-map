@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+// import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ErrorMessageProps {
   title?: string;
@@ -17,7 +17,7 @@ export function ErrorMessage({
   return (
     <div className="bg-red-50 border border-red-200 rounded-lg p-6">
       <div className="flex items-start">
-        <ExclamationTriangleIcon className="h-6 w-6 text-red-600 mt-0.5" />
+        {/* <ExclamationTriangleIcon className="h-6 w-6 text-red-600 mt-0.5" /> */}
         <div className="ml-3 flex-1">
           <h3 className="text-sm font-medium text-red-800">{title}</h3>
           <p className="mt-1 text-sm text-red-700">{message}</p>

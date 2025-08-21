@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// ランタイム指定（Node.jsランタイムを使用）
+export const runtime = 'nodejs';
+
 const API_BASE_URL = process.env.API_BASE_URL || 'https://tokyo-wellbeing-map-api-mongo.onrender.com';
 const TIMEOUT = 30000; // 30秒のタイムアウト
 const MAX_RETRIES = 3;
@@ -36,7 +39,7 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = 0): P
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   const requestId = crypto.randomUUID();
   const startTime = Date.now();
   
