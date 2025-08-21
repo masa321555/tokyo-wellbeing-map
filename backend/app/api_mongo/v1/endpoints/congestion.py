@@ -84,8 +84,8 @@ async def get_area_congestion(area_id_or_code: str):
             # 追加：元のデータも含める
             'congestion_score': congestion_dict.get('congestion_score', 60),
             'facility_congestion': facility_data,
-            'peak_congestion': train_station.get('peak', 70),
-            'average_congestion': train_station.get('average', 60)
+            'peak_congestion': max(morning_avg, evening_avg) if weekday_data else 70,
+            'average_congestion': congestion_dict.get('congestion_score', 60) * 0.85
         }
         
         return {

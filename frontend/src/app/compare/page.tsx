@@ -77,10 +77,15 @@ export default function ComparePage() {
           // 新しいAPI形式の場合
           if (congestionData.overall) {
             const baseScore = congestionData.congestion_score || congestionData.overall.score || 50;
+            // ピーク時混雑度: 時間帯別データの朝と夕方の最大値を使用
+            const morningPeak = congestionData.time_based?.morning || 70;
+            const eveningPeak = congestionData.time_based?.evening || 75;
+            const timeBasedPeak = Math.max(morningPeak, eveningPeak);
+            
             normalizedData = {
               congestion_score: baseScore,
               average_congestion: congestionData.average_congestion || Math.round(baseScore * 0.85),
-              peak_congestion: congestionData.peak_congestion || congestionData.facility_congestion?.train_station?.peak || Math.round(baseScore * 1.2),
+              peak_congestion: congestionData.peak_congestion || timeBasedPeak,
               facility_congestion: {
                 train_station: { 
                   peak: congestionData.facility_congestion?.train_station?.peak || congestionData.facility_based?.station || Math.round(baseScore * 1.3), 
@@ -91,10 +96,19 @@ export default function ComparePage() {
           } 
           // 古いAPI形式またはDBから直接取得した場合
           else if (congestionData.congestion_score) {
+            // weekday_congestionから最大値を取得してピーク時混雑度とする
+            let peakCongestion = 0;
+            if (congestionData.weekday_congestion) {
+              const weekdayValues = Object.values(congestionData.weekday_congestion).filter(v => typeof v === 'number') as number[];
+              peakCongestion = weekdayValues.length > 0 ? Math.max(...weekdayValues) : 70;
+            } else {
+              peakCongestion = Math.round(congestionData.congestion_score * 1.3);
+            }
+            
             normalizedData = {
               congestion_score: congestionData.congestion_score,
               average_congestion: congestionData.average_congestion || Math.round(congestionData.congestion_score * 0.85),
-              peak_congestion: congestionData.facility_congestion?.train_station?.peak || Math.round(congestionData.congestion_score * 1.3),
+              peak_congestion: peakCongestion,
               facility_congestion: {
                 train_station: { 
                   peak: congestionData.facility_congestion?.train_station?.peak || Math.round(congestionData.congestion_score * 1.3), 
