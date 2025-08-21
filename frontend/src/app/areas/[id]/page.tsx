@@ -263,7 +263,7 @@ export default function AreaDetailPage() {
               </div>
               <div className="flex justify-between">
                 <dt className="text-gray-600">一人当たり面積</dt>
-                <dd className="font-medium">{area.park_data.parks_per_capita?.toFixed(1)}m²</dd>
+                <dd className="font-medium">{area.park_data.park_per_capita?.toFixed(1)}m²</dd>
               </div>
               {area.park_data.large_parks !== undefined && (
                 <div className="flex justify-between">

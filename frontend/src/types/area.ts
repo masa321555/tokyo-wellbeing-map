@@ -29,7 +29,7 @@ export interface HousingData {
 export interface ParkData {
   total_parks?: number;
   total_area_sqm?: number;
-  parks_per_capita?: number;
+  park_per_capita?: number;
   city_parks?: number;
   neighborhood_parks?: number;
   children_parks?: number;
