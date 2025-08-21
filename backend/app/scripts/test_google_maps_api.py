@@ -18,7 +18,12 @@ def test_api_with_samples():
     """APIキーのテストと少数サンプルでの動作確認"""
     
     # APIキー
-    api_key = "AIzaSyCUcUNVJ4cZHJubJ51pMzHkE791jCm74NY"
+    # APIキーを環境変数から取得
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+    if not api_key:
+        print("Error: GOOGLE_MAPS_API_KEY not found in environment variables")
+        print("Please set GOOGLE_MAPS_API_KEY in your .env file")
+        return False
     
     try:
         # Google Maps クライアントを初期化

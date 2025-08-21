@@ -245,7 +245,12 @@ def save_output(output_csv: str, data: List[Dict]):
 
 def main(start_row=0, batch_size=50):
     # APIキー
-    api_key = "AIzaSyCUcUNVJ4cZHJubJ51pMzHkE791jCm74NY"
+    # APIキーを環境変数から取得
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+    if not api_key:
+        print("Error: GOOGLE_MAPS_API_KEY not found in environment variables")
+        print("Please set GOOGLE_MAPS_API_KEY in your .env file")
+        return
     
     # ファイルパス
     input_csv = '/Users/mitsuimasaharu/Downloads/tokyo_23ku_townlist.csv'

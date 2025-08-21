@@ -9,7 +9,15 @@ import json
 from typing import Dict, Optional
 
 # Google Maps API キー
-API_KEY = "AIzaSyCUcUNVJ4cZHJubJ51pMzHkE791jCm74NY"
+# Google Maps API キーを環境変数から取得
+from dotenv import load_dotenv
+load_dotenv()
+
+API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+if not API_KEY:
+    print("Error: GOOGLE_MAPS_API_KEY not found in environment variables")
+    print("Please set GOOGLE_MAPS_API_KEY in your .env file")
+    exit(1)
 
 def get_nearest_station(gmaps, ward: str, town: str) -> Dict[str, Optional[str]]:
     """町の最寄り駅を取得"""
