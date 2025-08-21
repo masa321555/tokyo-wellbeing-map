@@ -1,0 +1,38 @@
+{
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/.next",
+  "framework": "nextjs",
+  "installCommand": "cd frontend && npm install",
+  "build": {
+    "env": {
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "NODE_ENV": "production"
+    }
+  },
+  "functions": {
+    "frontend/src/app/api/proxy/areas/[areaId]/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/proxy/areas/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/proxy/areas/compare/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/proxy/wellbeing/weights/presets/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/proxy/wellbeing/ranking/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/proxy/wellbeing/calculate/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/proxy/search/route.ts": {
+      "runtime": "nodejs20.x"
+    },
+    "frontend/src/app/api/health/upstream/route.ts": {
+      "runtime": "nodejs20.x"
+    }
+  }
+}
