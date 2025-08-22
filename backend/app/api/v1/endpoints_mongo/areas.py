@@ -58,6 +58,14 @@ async def get_area(area_id: int):
     if waste_rules:
         area_dict["waste_rules"] = waste_rules.dict(exclude={"area", "id"})
     
+    # childcare_supportsを追加
+    if hasattr(area, 'childcare_supports') and area.childcare_supports:
+        # ChildcareSupportオブジェクトのリストをdictのリストに変換
+        supports_list = []
+        for support in area.childcare_supports:
+            supports_list.append(support.dict())
+        area_dict["childcare_supports"] = supports_list
+    
     # IDを整数に変換
     area_dict["id"] = area_id
     
