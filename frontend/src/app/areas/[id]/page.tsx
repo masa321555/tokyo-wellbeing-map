@@ -50,6 +50,11 @@ export default function AreaDetailPage() {
       if (areaData?.town_list) {
         console.log('Town list found:', areaData.town_list);
       }
+      if (areaData?.childcare_supports) {
+        console.log('Childcare supports found:', areaData.childcare_supports);
+      } else {
+        console.log('No childcare supports in response');
+      }
       
       setArea(areaData);
       setWellbeingScore(scoreData);
